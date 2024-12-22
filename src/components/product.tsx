@@ -135,7 +135,9 @@ const ProductCard = () => {
             {/* Hover Effect */}
             <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <button className="bg-white text-[#B88E2F] px-8 py-2  mb-2 font-medium shadow">
+                <a href="/cart">
                 Add to Cart
+                </a>
               </button>
               <div className="flex space-x-2">
                 <button className="flex items-center gap-1  text-white">
