@@ -17,7 +17,7 @@ import { FaBars } from "react-icons/fa6";
 export default function Header(){
     return(
         <>
-        <header className="">
+        <header className="sticky shadow top-0 z-50 ">
             <div className="flex justify-between mx-2 md:mx-10 py-4  text-center items-center">
                 <div className="flex justify-center items-center gap-1 text-center">
                 {/* Logo */}
@@ -37,7 +37,7 @@ export default function Header(){
                 </Link>
                 </div>
 
-                <div className="hidden gap-12 md:flex mt-1">
+                <div className="hidden gap-12 lg:flex mt-1">
                         <Link
                             href="/"
                             className="relative text-black after:content-[''] after:absolute after:left-0 after:bottom-[0px] after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 hover:after:w-full"
@@ -64,7 +64,7 @@ export default function Header(){
                         </Link>
                 </div>
                 
-                <div className="hidden md:flex items-center gap-4">
+                <div className="hidden lg:flex items-center gap-4">
                      <button className="text-gray-600 hover:text-gray-800">
                         {/* React Icon for Shopping Cart */}
                         <RiAccountPinCircleFill size={24} />
@@ -91,7 +91,7 @@ export default function Header(){
                 </div>
 
                 <Sheet >
-                <SheetTrigger className="md:hidden "> <FaBars /> </SheetTrigger>
+                <SheetTrigger className="lg:hidden text-2xl"> <FaBars className="text-[#B88E2F]"/> </SheetTrigger>
                 <SheetContent>
                     <SheetHeader>
                     <SheetTitle>
