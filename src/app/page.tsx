@@ -2,14 +2,17 @@ import Banner from "@/components/banner";
 import BrowseRange from "@/components/category";
 import ImageGrid from "@/components/frame";
 import  TrendyProductsSection from "@/components/inspiration";
-import ProductCard from "@/components/product";
+import Products from "@/components/product";
 
 export default function HomePage(){
   return(
     <>
     <Banner/>
     <BrowseRange/>
-    <ProductCard/>
+    <div>
+    <h1 className="text-center text-2xl font-bold mb-8">Our Products</h1>
+      <Products/>
+    </div>   
     <TrendyProductsSection/>
     <ImageGrid/>
     </>

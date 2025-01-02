@@ -10,6 +10,7 @@ import { LiaGripLinesVerticalSolid } from "react-icons/lia";
 import Pagination from "@/components/button/pagination";
 import Link from "next/link";
 import Feature from "@/components/button/feature";
+import Products from "@/components/product";
 
 
 
@@ -194,135 +195,67 @@ const ShopPage = () => {
     </div>
 
     <div className="flex flex-col lg:flex-row justify-around items-center bg-[#F9F1E7] py-7 gap-4">
-  {/* Left Section */}
-  <div className="flex flex-col sm:flex-row items-center text-center gap-4">
-    <ul className="flex text-xl sm:text-2xl gap-4">
-      <li className="flex items-center gap-2">
-        <a className="flex items-center gap-2" href="#">
-          <TbArrowsRightLeft />
-          <span className="">Filter</span>
-        </a>
-      </li>
-      <li>
-        <a href="#">
-          <BiGridSmall className="" />
-        </a>
-      </li>
-      <li>
-        <a href="#">
-          <BsViewList />
-        </a>
-      </li>
-    </ul>
-    <LiaGripLinesVerticalSolid className="hidden sm:block text-2xl mx-2" />
-    <p className="text-base sm:text-lg">Showing 1–16 of 32 results</p>
+    {/* Left Section */}
+    <div className="flex flex-col sm:flex-row items-center text-center gap-4">
+      <ul className="flex text-xl sm:text-2xl gap-4">
+        <li className="flex items-center gap-2">
+          <a className="flex items-center gap-2" href="#">
+            <TbArrowsRightLeft />
+            <span className="">Filter</span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <BiGridSmall className="" />
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <BsViewList />
+          </a>
+        </li>
+      </ul>
+      <LiaGripLinesVerticalSolid className="hidden sm:block text-2xl mx-2" />
+      <p className="text-base sm:text-lg">Showing 1–16 of 32 results</p>
+    </div>
+
+    {/* Right Section */}
+    <div className="flex  flex-col sm:flex-row text-lg gap-4 w-full lg:w-auto">
+      <div className="flex items-center gap-2 sm:gap-4">
+        <label htmlFor="shop" className="font-medium">
+          Show
+        </label>
+        <select
+          id="language"
+          className="p-1 text-gray-400 border rounded"
+        >
+          <option value="number">16</option>
+          <option value="32">32</option>
+          <option value="64">64</option>
+        </select>
+      </div>
+      <div className="flex items-center gap-2 sm:gap-4">
+        <label htmlFor="shortby" className="font-medium">
+          Short by
+        </label>
+        <select
+          id="shortby"
+          className="p-1 text-gray-400 border rounded"
+        >
+          <option value="default">Default</option>
+          <option value="price">Price</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
+    </div>
   </div>
 
-  {/* Right Section */}
-  <div className="flex  flex-col sm:flex-row text-lg gap-4 w-full lg:w-auto">
-    <div className="flex items-center gap-2 sm:gap-4">
-      <label htmlFor="shop" className="font-medium">
-        Show
-      </label>
-      <select
-        id="language"
-        className="p-1 text-gray-400 border rounded"
-      >
-        <option value="number">16</option>
-        <option value="32">32</option>
-        <option value="64">64</option>
-      </select>
-    </div>
-    <div className="flex items-center gap-2 sm:gap-4">
-      <label htmlFor="shortby" className="font-medium">
-        Short by
-      </label>
-      <select
-        id="shortby"
-        className="p-1 text-gray-400 border rounded"
-      >
-        <option value="default">Default</option>
-        <option value="price">Price</option>
-        <option value="name">Name</option>
-      </select>
-    </div>
-  </div>
-</div>
 
 
-
-    <div className="pt-12 px-5 md:px-28">
+    <div className="pt-12 px-5 ">
 
       {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-        {products.map((product, index) => (
-          <div
-            key={index}
-            className="relative group bg-gray-100  overflow-hidden"
-          >
-            {/* Product Image */}
-            <Image
-              src={product.image}
-              alt={product.name}
-              width='1000'
-              height='1000'
-              className="w-full h-60 object-cover"
-            />
-
-            {/* Discount Tag */}
-            {product.discount && (
-              <span className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold py-3 px-2 rounded-full ">
-                {product.discount}
-              </span>
-            )}
-
-            {/* New Tag */}
-            {product.tag && (
-              <span className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold py-3 px-2 rounded-full">
-                {product.tag}
-              </span>
-            )}
-
-            {/* Product Details */}
-            <div className="p-4">
-              <h3 className="font-semibold text-lg">{product.name}</h3>
-              <p className="text-gray-500 text-sm">{product.description}</p>
-              <div className="mt-2 flex items-center space-x-2">
-                <span className="text-red-500 font-bold">{product.price}</span>
-                {product.oldPrice && (
-                  <span className="text-gray-400 line-through text-sm">
-                    {product.oldPrice}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Hover Effect */}
-            <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <button className="bg-white text-[#B88E2F] px-8 py-2  mb-2 font-medium shadow">
-                <Link href='/singleproduct'>
-                Add to Cart
-                </Link>
-              </button>
-              <div className="flex space-x-2">
-                <button className="flex items-center gap-1  text-white">
-                    <IoMdShare />
-                    <span>Share</span>
-                </button>
-                <button className="flex items-center gap-1 text-white">
-                    <MdCompareArrows />
-                    <span>Compare</span>
-                </button>
-                <button className="flex items-center gap-1 text-white">
-                    <FaRegHeart className=""/>
-                    <span>Like</span>
-                </button>
-                </div>
-
-            </div>
-          </div>
-        ))}
-      </div>
+      <Products/>
 
       {/* Show More Button */}
         <Pagination/>

@@ -1,119 +1,94 @@
+'use client';
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 const ImageGrid = () => {
+  const images = [
+    "/fram/1.png",
+    "/fram/2.png",
+    "/fram/3.png",
+    "/fram/4.png",
+    "/fram/5.png",
+    "/fram/6.png",
+    "/fram/7.png",
+    "/fram/8.png",
+    "/fram/9.png",
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleDotClick = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 3000); // Change image every 3 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [images.length]);
+
   return (
-    <>
-    <div className=" w-full mt-10 mb-14">
-      <h2 className="text-center text-sm text-gray-600 mb-6 ">
+    <div className="w-full mt-10 mb-14">
+      <h2 className="text-center text-sm text-gray-600 mb-6">
         Share your setup with
         <br />
         <span className="text-gray-950 font-bold text-3xl">#FuniroFurniture</span>
       </h2>
 
-      <div className="md:flex md:space-x-4 space-y-7 md:space-y-0 mx-5 md:mx-0 items-center ">
-        <div className=" space-y-6">
-        <div className="md:left-[23px] md:top-1 relative">
-          <Image
-            src="/category/badroom.png"
-            alt="Shelves with plants"
-            width='7800'
-            height='38200'
-            className=" w-full md:w-[78px] md:h-[382px]"
-          />
-        </div>
-
-        <div className="md:left-[17px] md:top-1 relative">
-          <Image
-            src="/category/dining.png"
-            alt="Laptop Workspace"
-            width='18500'
-            height='32300'
-            className="w-full md:w-[185px] md:h-[323px]"
-          />
-        </div>            
-        </div>
-
+      {/* For larger screens (Grid Layout) */}
+      <div className="hidden lg:flex justify-center space-x-6 items-center">
         <div className="space-y-6">
-        <div className="md:-left-[40px]  relative">
-          <Image
-            src="/category/living.png"
-            alt="Dining Table"
-            width='45100'
-            height='31200'
-            className="w-full h-full md:w-[490px] md:h-[312px]"
-          />
+          <div className="flex items-end space-x-6">
+            <Image src={images[0]} alt="" width={992} height={1000} className="lg:w-[32.22px] lg:h-[382px]" />
+            <Image src={images[1]} alt="" width={992} height={1000} className="lg:w-[405.22px] lg:h-[312px]" />
+          </div>
+          <div className="flex space-x-6">
+            <Image src={images[2]} alt="" width={992} height={1000} className="lg:w-[139.22px] lg:h-[323px]" />
+            <Image src={images[3]} alt="" width={992} height={1000} className="lg:w-[298.22px] lg:h-[242px]" />
+          </div>
         </div>
-
-        <div className="md:left-[23px] relative">
-          <Image
-            src="/category/badroom.png"
-            alt="Bedroom"
-            width='34400'
-            height='24200'
-            className="w-full md:w-[320px] md:h-[242]"
-          />
-        </div>            
+        <div>
+          <Image src={images[4]} alt="" width={992} height={1000} className="lg:w-[249.22px] lg:h-[392px]" />
         </div>
-
-        <div className=" md:flex items-center">
-        <div className="md:-left-[35px] relative">
-          <Image
-            src="/category/dining.png"
-            alt="Armchair"
-            width='29500'
-            height='39200'
-            className="md:w-[295px] w-full h-full md:h-[392px]"
-          />
-        </div>            
-        </div>
-
         <div className="space-y-6">
-        <div className="md:-left-[30px] relative">
-          <Image
-            src="/category/living.png"
-            alt="Vases on Stools"
-            width='29000'
-            height='34800'
-            className="md:w-[290px] w-full h-full md:h-[348px]"
-          />
+          <div className="flex items-end space-x-6">
+            <Image src={images[5]} alt="" width={992} height={1000} className="lg:w-[244.22px] lg:h-[348px]" />
+            <Image src={images[6]} alt="" width={992} height={1000} className="lg:w-[216.22px] lg:h-[433px]" />
+          </div>
+          <div className="flex space-x-6">
+            <Image src={images[7]} alt="" width={992} height={1000} className="lg:w-[132.22px] lg:h-[242px]" />
+            <Image src={images[8]} alt="" width={992} height={1000} className="lg:w-[212.22px] lg:h-[196px]" />
+          </div>
         </div>
+      </div>
 
-        <div className="md:-left-[30px] relative">
+      {/* For mobile and tablet screens (Carousel Layout) */}
+      <div className="lg:hidden flex flex-col items-center justify-center">
+        <div className="relative w-[260px] md:w-[600px] h-[300px]">
           <Image
-            src="/category/badroom.png"
-            alt="Frame with Plants"
-            width='17800'
-            height='24200'
-            className="md:w-[178px] w-full h-full md:h-[242px]"
-          />
-        </div>             
-        </div>
-
-        <div className="space-y-6">
-        <div className="md:-left-[25px] md:-top-10 relative">
-          <Image
-            src="/category/dining.png"
-            alt="Office Corner"
-            width='26200'
-            height='43300'
-            className="md:w-[262px] h-full w-full  md:h-[380px]"
+            src={images[currentIndex]}
+            alt=""
+            width={992}
+            height={1000}
+            objectFit="cover"
+            className="h-[300px]  w-[760px] rounded-lg"
           />
         </div>
-        <div className="md:-top-10 md:-left-[74px] relative">
-          <Image
-            src="/category/dining.png"
-            alt="Office Corner"
-            width='25800'
-            height='19600'
-            className="md:w-[258px] w-full h-full md:h-[196px]"
-          />
-        </div>            
+        <div className="flex mt-4 space-x-2">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handleDotClick(index)}
+              className={`w-3 h-3 rounded-full ${
+                index === currentIndex ? "bg-gray-800" : "bg-gray-400"
+              }`}
+            />
+          ))}
         </div>
-
       </div>
     </div>
-
-    </>
   );
 };
 

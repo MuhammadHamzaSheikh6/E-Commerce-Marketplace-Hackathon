@@ -1,99 +1,110 @@
 "use client";
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
 
-const images = [
-  {
-    src: '/banner/banner.png',
-    alt: 'Image 1',
-    topHeading: 'New Arrival',
-    centerHeading: 'Discover Our New Collection',
-    bottomHeading: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis.',
-    buttonLink: '/collection/new-arrivals', // Unique link for this image
-  },
-  {
-    src: '/banner/banner.png',
-    alt: 'Image 2',
-    topHeading: 'New Arrival',
-    centerHeading: 'Discover Our New Collection',
-    bottomHeading: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis.',
-    buttonLink: '/collection/new-arrivals', // Unique link for this image 
- },
-  {
-    src: '/banner/banner.png',
-    alt: 'Image 3',
-    topHeading: 'New Arrival',
-    centerHeading: 'Discover Our New Collection',
-    bottomHeading: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis.',
-    buttonLink: '/collection/new-arrivals', // Unique link for this image
-  },
-];
+import { client } from "@/sanity/lib/client";
+import { urlFor } from "@/sanity/lib/image";
+import { useState, useEffect } from "react";
 
+interface IBanner {
+  _id: string;
+  image: string;
+  alt: string;
+  topHeading: string;
+  centerHeading: string;
+  bottomHeading: string;
+  buttonLink: string;
+}
+
+const fetchBannerData = async () => {
+  return await client.fetch(
+    '*[_type == "banner"]{_id, topHeading, centerHeading, bottomHeading, buttonLink, image}'
+  );
+};
 
 export default function Banner() {
+  const [banners, setBanners] = useState<IBanner[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Function to go to the next slide
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % images.length);
-  };
-
-  // Function to go to the previous slide
-  // const prevSlide = () => {
-  //   setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
-  // };
+  // Fetch banner data from Sanity
+  useEffect(() => {
+    const getBanners = async () => {
+      const data = await fetchBannerData();
+      setBanners(data);
+    };
+    getBanners();
+  }, []);
 
   // Auto-slide every 3 seconds
   useEffect(() => {
-    const slideInterval = setInterval(nextSlide, 3000);
+    const slideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % banners.length);
+    }, 3000);
+
     return () => clearInterval(slideInterval);
-  }, []);
+  }, [banners.length]);
+
+  // If no banners are available, return null
+  if (!banners.length) return null;
 
   return (
-    <div className=" relative w-full h-full overflow-hidden">
+    <section
+      className="relative w-full h-full overflow-hidden"
+      aria-label="Banner Carousel"
+    >
       {/* Images */}
       <div
-          className="flex transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-        >
-          {images.map((image, index) => (
-            <div
-              key={index}
-              className="relative min-w-full h-full bg-cover bg-center"
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                width="1000"
-                height="1000"
-                className="w-full h-full object-contain"
-              />
-              <div
-                key={index}
-                className="hidden md:block absolute top-1/2 md:pl-12 md:pr-14 md:py-10  md:w-[400px] md:h-[300px]   right-12 lg:w-[623px] lg:h-[423px] rounded-xl  bg-[#FFF3E3]  transform -translate-y-1/2"
+        className="flex transition-transform duration-500 ease-in-out"
+        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+      >
+        {banners.map((banner, index) => (
+          <figure
+            key={banner._id}
+            className="relative min-w-full h-full bg-cover bg-center"
+            aria-hidden={index !== currentSlide}
+          >
+            <img
+              src={urlFor(banner.image).url()}
+              alt={banner.alt || "Banner Image"}
+              width={1000}
+              height={1000}
+              loading="lazy"
+              className=" w-full md:h-[400px] h-[170px] lg:h-[650px] object-cover "
+            />
+            <figcaption className="hidden md:block absolute top-1/2 md:pl-8 md:pr-5 md:pt-9 md:w-[360px] md:h-[280px] right-12 lg:w-[623px] lg:h-[423px] rounded-xl bg-[#FFF3E3] transform -translate-y-1/2">
+              <h2 className="lg:text-xl font-semibold">{banner.topHeading}</h2>
+              <h1 className="lg:text-5xl lg:my-4 md:text-2xl py-1 text-[#B88E2F] font-extrabold">
+                {banner.centerHeading}
+              </h1>
+              <p className="lg:font-semibold text-gray-600 md:text-sm">
+                {banner.bottomHeading}
+              </p>
+              <a
+                href={banner.buttonLink}
+                className="bg-[#B88E2F] hover:bg-[rgba(184,143,47,0.77)] md:mt-7 lg:mt-12 md:px-5 md:py-2 lg:px-12 lg:py-6 text-white font-bold inline-block"
               >
-                <h4 className="lg:text-xl font-semibold">{image.topHeading}</h4>
-                <h3 className="lg:text-5xl lg:my-4 md:text-2xl text-[#B88E2F] font-extrabold ">{image.centerHeading}</h3>
-                <p className="lg:font-semibold md:text-sm">{image.bottomHeading}</p>
-                <button className='bg-[#B88E2F] hover:bg-[rgba(184,143,47,0.77)] md:mt-3 lg:mt-12 md:px-7 md:py-4 lg:px-12 lg:py-6 text-white font-bold'>
-                  <a href={image.buttonLink}> BUY NOW</a>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
+                BUY NOW
+              </a>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
 
       {/* Dots for navigation */}
-      <div className="absolute bottom-4 w-full flex justify-center space-x-2">
-        {images.map((_, index) => (
+      <nav
+        className="absolute bottom-4 w-full flex justify-center space-x-2"
+        aria-label="Carousel Navigation"
+      >
+        {banners.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full ${index === currentSlide ? 'bg-white' : 'bg-gray-500'}`}
+            className={`w-3 h-3 rounded-full ${
+              index === currentSlide ? "bg-white" : "bg-gray-500"
+            }`}
+            aria-label={`Slide ${index + 1}`}
+            aria-current={index === currentSlide ? "true" : "false"}
           ></button>
         ))}
-      </div>
-    </div>
+      </nav>
+    </section>
   );
 }
