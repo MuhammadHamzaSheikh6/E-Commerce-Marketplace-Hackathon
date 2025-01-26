@@ -1,43 +1,45 @@
 import { client } from '@/sanity/lib/client';
 import { FaAngleRight } from 'react-icons/fa';
-import Image from 'next/image';
 import Head from 'next/head'; // For adding meta tags to the page
 import Products from '@/components/product';
 import Detail from '@/components/singlePerduct/detail';
+import Link from 'next/link';
+
 
 interface IProduct {
   _id: string;
-  name: string;
+  title: string;
   description: string;
   price: string;
   oldPrice?: string;
   discount?: string;
   tag?: string;
-  image: string;
-  image1: string;
-  image2: string;
-  image3: string;
-  rating: number;
-  customerReview: number;
-  shortDescription: string;
+  productImage: string;
+  image1?: string;
+  image2?: string;
+  image3?: string;
+  rating?: number;
+  customerReview?: number;
+  shortDescription?: string;
   size: string;
   color: string;
-  SKU: string;
-  category: string;
-  tags: string;
+  SKU?: string;
+  category?: string;
+  tags?: string;
 }
+
 
 const getProductDataById = async (id: string) => {
   try {
     const query = `*[_type == "product" && _id == $id]{
       _id, 
-      name, 
+      title, 
       description, 
       price, 
       oldPrice, 
       discount, 
       tag, 
-      image,
+      productImage,
       image1,
       image2,
       image3,
@@ -70,17 +72,17 @@ export default async function ProductPage({ params }: { params: { id: string } }
     <>
       <Head>
         {/* SEO meta tags */}
-        <title>{product.name} | Your Shop Name</title>
+        <title>{product.title} | Your Shop Name</title>
         <meta name="description" content={product.shortDescription || product.description} />
-        <meta name="keywords" content={`Shop, ${product.category}, ${product.tags}, ${product.name}`} />
-        <meta property="og:title" content={product.name} />
+        <meta name="keywords" content={`Shop, ${product.category}, ${product.tags}, ${product.title}`} />
+        <meta property="og:title" content={product.title} />
         <meta property="og:description" content={product.shortDescription || product.description} />
-        <meta property="og:image" content={product.image} />
+        <meta property="og:image" content={product.productImage} />
         <meta property="og:type" content="product" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={product.name} />
+        <meta name="twitter:title" content={product.title} />
         <meta name="twitter:description" content={product.shortDescription || product.description} />
-        <meta name="twitter:image" content={product.image} />
+        <meta name="twitter:image" content={product.productImage} />
       </Head>
 
       <div>
@@ -89,7 +91,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
           <nav aria-label="breadcrumb">
             <ol className="flex gap-3 text-sm md:ml-14 ml-3 text-gray-500 items-center">
               <li>
-                <a href="/" className="hover:text-black">Home</a>
+                <Link href="/" className="hover:text-black">Home</Link>
               </li>
               <FaAngleRight className="text-black" />
               <li>
@@ -97,7 +99,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
               </li>
               <FaAngleRight className="text-black" />
               <li aria-current="page" className="font-m text-gray-950">
-                {product.name}
+                {product.title}
               </li>
             </ol>
           </nav>

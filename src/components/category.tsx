@@ -1,18 +1,13 @@
 'use client';
 
-
 import React, { useState, useEffect } from 'react';
 import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
+import Image from 'next/image';
 
 interface ICategory {
   title: string;
   image: string;
-}
-
-interface IHeading {
-  mainHeading: string;
-  subHeading: string;
 }
 
 const fetchBrowseCategories = async () => {
@@ -53,16 +48,22 @@ const BrowseRange = () => {
             key={index}
             className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"
           >
-            <img
-              src={urlFor(category.image).url()}
-              alt={category.title}
-              width={1000}
-              height={1000}
-              className="w-full h-auto object-cover"
-            />
-            <div className="p-4">
-              <h3 className="text-lg font-medium">{category.title}</h3>
-            </div>
+            <a
+              href={`/category/${encodeURIComponent(category.title)}`}
+              aria-label={`Explore category: ${category.title}`}
+            >
+              <Image
+                src={urlFor(category.image).url()}
+                alt={`Category: ${category.title}`}
+                width={500}
+                height={500}
+                className="w-full h-auto object-cover"
+                priority={index === 0} // Prioritize the first image for better performance
+              />
+              <div className="p-4">
+                <h3 className="text-lg font-medium">{category.title}</h3>
+              </div>
+            </a>
           </div>
         ))}
       </div>

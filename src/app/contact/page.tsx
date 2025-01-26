@@ -1,166 +1,215 @@
 'use client';
 
-import Feature from '@/components/button/feature';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { MdKeyboardArrowRight, MdLocalPhone, MdLocationPin, MdOutlineAccessTimeFilled } from 'react-icons/md';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+const formSchema = z.object({
+  yourname: z.string().min(2, "Name is too short").max(50),
+  email: z.string().email("Invalid email address"),
+  subject: z.string().min(1, "Subject cannot be empty").max(200),
+  message: z.string().min(1, "Message cannot be empty").max(1000),
+});
 
 const ContactPage: React.FC = () => {
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      yourname: "",
+      email: "",
+      subject: "",
+      message: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to submit form");
+      }
+  
+      alert("Form submitted successfully!");
+      form.reset(); // Reset form after successful submission
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        alert(error.message || "Failed to submit form");
+      } else {
+        console.error("An unknown error occurred");
+        alert("An unknown error occurred");
+      }
+    }
+  }
+  
+
   return (
     <>
-          <header className="">
-      <div className="relative w-full h-[50vh] md:h-[55vh]  ">
-        <Image
-          src="/shop/banner.jpg" // Replace with your map image path
-          alt="Shop Map"
-          layout="fill"
-          objectFit="cover"
-          className=" opacity-70 brightness-75 "
-        />
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
-                <Link href="/">
-                    <Image
-                    src="/logo.png" // Replace with the path to your logo image
-                    alt="Furniro Logo"
-                    width='32'
-                    height='20'
-                    className="w-12 h-8" // Adjust size as needed
-                    />
-                </Link>
+      <header>
+        <div className="relative w-full h-[50vh] md:h-[55vh]">
+          <Image
+            src="/shop/banner11.png"
+            alt="Shop Map"
+            layout="fill"
+            objectFit="cover"
+            className=""
+          />
+          <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                alt="Furniro Logo"
+                width={32}
+                height={20}
+                className="w-12 h-8"
+              />
+            </Link>
             <h4 className="text-4xl font-bold">Contact</h4>
             <h5 className="flex items-center text-sm md:text-xl mb-4 space-x-1">
-            <Link className="font-bold text-2xl" href="/">Home</Link>
-            <MdKeyboardArrowRight className="mt-2 text-2xl"/>
-            <a className='mt-1 md:mt-0' href="#">Contact</a>
+              <Link className="font-bold text-2xl" href="/">Home</Link>
+              <MdKeyboardArrowRight className="mt-2 text-2xl" />
+              <a className='mt-1 md:mt-0' href="#">Contact</a>
             </h5>
+          </div>
         </div>
-      </div>
       </header>
-    <div className=" pt-16 pb-11 px-6 lg:px-36">
+      <div className="pt-16 pb-11 px-6 lg:px-36">
         <div className='items-center mb-24 justify-center text-center'>
-            <h2 className="md:text-3xl text-2xl lg:text-4xl font-bold text-gray-800">
-                Get In Touch With Us
-            </h2>
-            <p className="text-gray-600 md:px-52">
-                For more information about our products & services, please feel free to drop us an email. Our staff is always here to help you out. Do not hesitate!
-            </p>
+          <h2 className="md:text-3xl text-2xl lg:text-4xl font-bold text-gray-800">
+            Get In Touch With Us
+          </h2>
+          <p className="text-gray-600 md:px-52">
+            For more information about our products & services, please feel free to drop us an email. Our staff is always here to help you out. Do not hesitate!
+          </p>
         </div>
-      <div className="max-w-7xl   mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Left Section */}
-        <div className="space-y-8">
-          <div className="space-y-6">
-            <div className="flex items-start space-x-3">
-              <span className="text-2xl "><MdLocationPin /></span>
-              <div>
-                <h4 className="font-semibold pt-2 text-gray-800">Address</h4>
-                <p className="text-gray-600">
-                  236 5th SE Avenue, New York NY10000, United States
-                </p>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Contact Information */}
+          <div className="space-y-8">
+            <div className="space-y-6">
+              <div className="flex items-start space-x-3">
+                <span className="text-2xl"><MdLocationPin /></span>
+                <div>
+                  <h4 className="font-semibold pt-2 text-gray-800">Address</h4>
+                  <p className="text-gray-600">
+                    Sector 13, Block J Orangi Town Karachi, Pakistan.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start space-x-4">
-              <span className="text-2xl "><MdLocalPhone /></span>
-              <div>
-                <h4 className="font-semibold pt-2 text-gray-800">Phone</h4>
-                <p className="text-gray-600">
-                  Mobile: (+84) 546-6789 <br />
-                  Hotline: (+84) 546-6789
-                </p>
+              <div className="flex items-start space-x-4">
+                <span className="text-2xl"><MdLocalPhone /></span>
+                <div>
+                  <h4 className="font-semibold pt-2 text-gray-800">Phone</h4>
+                  <p className="text-gray-600">
+                    Mobile: (+92) 341-2358480 <br />
+                    Hotline: (+92) 341-2358480
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start space-x-4">
-              <span className="text-2xl "><MdOutlineAccessTimeFilled /></span>
-              <div>
-                <h4 className="font-semibold pt-2 text-gray-800">Working Time</h4>
-                <p className="text-gray-600">
-                  Monday-Friday: 9:00 - 22:00 <br />
-                  Saturday-Sunday: 9:00 - 21:00
-                </p>
+              <div className="flex items-start space-x-4">
+                <span className="text-2xl"><MdOutlineAccessTimeFilled /></span>
+                <div>
+                  <h4 className="font-semibold pt-2 text-gray-800">Working Time</h4>
+                  <p className="text-gray-600">
+                    Monday-Friday: 9:00 - 22:00 <br />
+                    Saturday-Sunday: 9:00 - 21:00
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Right Section */}
-        <div className=" space-y-6">
-          <form
-            className="space-y-6"
-            onSubmit={(e) => {
-              e.preventDefault();
-              console.log('Form Submitted');
-            }}
-          >
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-950"
-                htmlFor="name"
+          {/* Contact Form */}
+          <div>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-10"
               >
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-3 px-3 focus:ring-[#b9935a] focus:border-[#b9935a]"
-                placeholder="Your name"
-                required
-              />
-            </div>
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-950"
-                htmlFor="email"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-3 px-3 focus:ring-[#b9935a] focus:border-[#b9935a]"
-                placeholder="Your email address"
-                required
-              />
-            </div>
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-950"
-                htmlFor="subject"
-              >
-                Subject
-              </label>
-              <input
-                type="text"
-                id="subject"
-                className="mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-3 px-3 focus:ring-[#b9935a] focus:border-[#b9935a]"
-                placeholder="This is optional"
-              />
-            </div>
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-950"
-                htmlFor="message"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                rows={4}
-                className="mt-2 block w-full border border-gray-300 rounded-md shadow-sm py-3 px-3 focus:ring-[#b9935a] focus:border-[#b9935a]"
-                placeholder="Hi! I'd like to ask about..."
-                required
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="w-40 ml-2 bg-[#B88E2F] text-white py-2 rounded-md text-lg font-medium hover:bg-[#a2814d] transition duration-300"
-            >
-              Submit
-            </button>
-          </form>
+                <FormField
+                  control={form.control}
+                  name="yourname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Name</FormLabel>
+                      <FormControl>
+                        <Input className='py-6' placeholder="Enter your name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input className='py-6' placeholder="Enter your email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="subject"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject</FormLabel>
+                      <FormControl>
+                        <Input className='py-6' placeholder="Enter subject" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Message</FormLabel>
+                      <FormControl>
+                        <textarea
+                          className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none"
+                          rows={4}
+                          placeholder="Enter your message"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full bg-yellow-600 hover:bg-yellow-500">
+                  Submit
+                </Button>
+              </form>
+            </Form>
+          </div>
         </div>
       </div>
-    </div>
-    <Feature/>
     </>
   );
 };

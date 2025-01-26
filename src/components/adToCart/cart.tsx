@@ -1,134 +1,158 @@
-'use client'
-import { useState,  } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { IoCartOutline, IoClose } from "react-icons/io5";
 import Image from "next/image";
-import { IoCartOutline } from "react-icons/io5";
+import { urlFor } from "@/sanity/lib/image";
 
-// Sample products (you can replace this with your API call)
-const sampleProducts = [
-  {
-    id: 1,
-    name: "Asgaard Sofa",
-    imageUrl: "/single/2.jpg",
-    price: 250000,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: "Casaliving Wood",
-    imageUrl: "/blog/laptop.jpg",
-    price: 270000,
-    quantity: 1,
-  },
-];
+interface CartItem {
+  productImage: string;
+  title: string;
+  price: number;
+  quantity: number;
+}
 
-export default function Cart() {
-  // Cart state to hold items and subtotal
-  const [cartItems, setCartItems] = useState<any[]>([]);
-  const [subtotal, setSubtotal] = useState<number>(0);
+export default function AddToCart() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Add item to the cart
-  const addToCart = (product: any) => {
-    setCartItems((prev) => {
-      const updatedCart = [...prev, product];
-      calculateSubtotal(updatedCart);
+  // Function to fetch cart from localStorage
+  const fetchCartFromStorage = () => {
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    setCartItems(storedCart);
+  };
+
+  useEffect(() => {
+    fetchCartFromStorage();
+
+    // Listen for `storage` events to update the cart when changed elsewhere
+    const handleStorageChange = () => fetchCartFromStorage();
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  // Remove item from cart using index
+  const removeFromCart = (productIndex: number) => {
+    setCartItems((prevCart) => {
+      const updatedCart = prevCart.filter((_, index) => index !== productIndex);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
       return updatedCart;
     });
   };
 
-  // Remove item from the cart
-  const removeFromCart = (productId: number) => {
-    setCartItems((prev) => {
-      const updatedCart = prev.filter((item) => item.id !== productId);
-      calculateSubtotal(updatedCart);
-      return updatedCart;
-    });
+  // Get image URL from Sanity
+  const getImageUrl = (image: string) => {
+    try {
+      return urlFor(image).url();
+    } catch (error) {
+      console.error("Error generating image URL:", error);
+      return "/placeholder-image.png"; // Fallback image
+    }
   };
-
-  // Calculate subtotal
-  const calculateSubtotal = (cart: any[]) => {
-    const total = cart.reduce((acc, item) => acc + item.price, 0);
-    setSubtotal(total);
-  };
-
-//   useEffect(() => {
-//     // Replace this with your API call to get the cart data
-//     // fetchCartData();
-//   }, []);
 
   return (
-    <Sheet>
-      <SheetTrigger className="text-gray-600 hover:text-gray-800">
-        <IoCartOutline size={24} />
-      </SheetTrigger>
-      <SheetContent className="h-auto md:w-full w-[260px] max-w-md p-4">
-        <SheetHeader>
-          <SheetTitle className="border-b pb-4 text-xl font-semibold">
-            Shopping Cart
-          </SheetTitle>
-        </SheetHeader>
+    <div>
+      <Sheet>
+        <SheetTrigger asChild>
+          <button className="relative mt-2">
+            <IoCartOutline size={24} />
+            {cartItems.length > 0 && (
+              <span className="absolute bottom-3 left-3 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItems.reduce((total, item) => total + item.quantity, 0)}
+              </span>
+            )}
+          </button>
+        </SheetTrigger>
 
-        {/* Cart Items */}
-        <div className="space-y-4 mt-4">
-          {cartItems.length === 0 ? (
-            <p className="text-center text-gray-500">Your cart is empty</p>
-          ) : (
-            cartItems.map((item: any) => (
-              <div key={item.id} className="flex items-center space-x-4 pb-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-md">
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.name}
-                    width={1000}
-                    height={1000}
-                    className="w-full h-full object-cover rounded-md"
-                  />
+        <SheetContent>
+          <SheetHeader className="flex">
+            <SheetTitle className="text-lg font-semibold">Shopping Cart</SheetTitle>
+          </SheetHeader>
+
+          <div className="mt-6">
+            {cartItems.length === 0 ? (
+              <p>Your cart is empty</p>
+            ) : (
+              <>
+                <div className="space-y-6">
+                  {cartItems.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 rounded-md"
+                    >
+                      <Image
+                        src={getImageUrl(item.productImage)}
+                        alt={item.title}
+                        width={64}
+                        height={64}
+                        className="w-16 h-16 rounded-md"
+                      />
+                      <div className="flex-1 mx-4">
+                        <h4 className="text-base font-semibold">{item.title}</h4>
+                        <p className="text-sm text-gray-500">
+                          {item.quantity} x Rs.{" "}
+                          {Number(item.price).toLocaleString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(index)}
+                        className="text-gray-400 hover:text-gray-700"
+                      >
+                        <IoClose size={20} />
+                      </button>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-800">{item.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {item.quantity} x Rs. {item.price.toLocaleString()}
-                  </p>
+
+                <div className="mt-6 border-t pt-4">
+                  <div className="flex justify-between text-lg font-semibold">
+                    <p>Subtotal</p>
+                    <p>
+                      Rs.{" "}
+                      {cartItems
+                        .reduce(
+                          (total, item) => total + item.price * item.quantity,
+                          0
+                        )
+                        .toLocaleString()}
+                    </p>
+                  </div>
                 </div>
-                <button
-                  className="text-gray-500 hover:text-gray-800"
-                  onClick={() => removeFromCart(item.id)}
-                >
-                  ✕
-                </button>
-              </div>
-            ))
-          )}
-        </div>
 
-        {/* Subtotal */}
-        <div className="flex justify-between items-center md:mt-36 pt-4">
-          <p className="font-medium text-gray-800">Subtotal</p>
-          <p className="font-medium text-yellow-600">
-            Rs. {subtotal.toLocaleString()}
-          </p>
-        </div>
-
-        {/* Actions */}
-        <div className="md:flex justify-between items-center space-y-4 md:space-y-0 space-x-2 border-t pt-5 mt-4">
-          <button className="flex-1 py-2 px-2 rounded-full border border-black text-black hover:bg-black hover:text-white transition">
-            <a href="/cart">View Cart</a>
-          </button>
-          <button className="flex-1 py-2 px-2 rounded-full border border-black text-black hover:bg-black hover:text-white transition">
-            <a href="/checkout">Checkout</a>
-          </button>
-          <button className="flex-1 py-2 px-2 rounded-full border border-black text-black hover:bg-black hover:text-white transition">
-            <a href="/comparison">Comparison</a>
-          </button>
-        </div>
-      </SheetContent>
-    </Sheet>
+                <div className="mt-6 flex justify-between space-x-2">
+                  <a
+                    href="/cart"
+                    className="flex-1 bg-gray-200 py-2 text-center rounded-md text-sm font-medium"
+                  >
+                    Cart
+                  </a>
+                  <a
+                    href="/checkout"
+                    className="flex-1 bg-black text-center text-white py-2 rounded-md text-sm font-medium"
+                  >
+                    Checkout
+                  </a>
+                  <a
+                    href="/comparison"
+                    className="flex-1 text-center bg-gray-200 py-2 rounded-md text-sm font-medium"
+                  >
+                    Comparison
+                  </a>
+                </div>
+              </>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
   );
 }

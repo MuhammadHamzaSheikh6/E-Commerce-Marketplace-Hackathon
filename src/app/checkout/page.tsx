@@ -1,11 +1,18 @@
 "use client";
-import Feature from "@/components/button/feature";
+
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 
+interface CartItem {
+  title: string;
+  price: number;
+  quantity: number;
+}
+
 export default function Checkout() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -21,277 +28,236 @@ export default function Checkout() {
     paymentMethod: "bank",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  // Fetch cart items from localStorage
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    if (Array.isArray(storedCart)) {
+      setCartItems(storedCart as CartItem[]);
+    }
+  }, []);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const calculateSubtotal = () =>
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
   return (
-    <>
-      <div className="w-full">
-        {/* Hero Section */}
-        <div className="relative w-full h-[50vh] md:h-[60vh]  ">
-          <Image
-            src="/shop/banner.jpg" // Replace with your map image path
-            alt="Shop Map"
-            layout="fill"
-            objectFit="cover"
-            className=" opacity-70 brightness-75 "
-          />
-          <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
-            <Link href="/">
-              <Image
-                src="/logo.png" // Replace with the path to your logo image
-                alt="Furniro Logo"
-                width="32"
-                height="20"
-                className="w-12 h-8" // Adjust size as needed
-              />
+    <div>
+      {/* Hero Section */}
+      <div className="relative w-full h-[50vh]">
+        <Image
+          src="/shop/banner11.png"
+          alt="Bedroom Shop Banner"
+          layout="fill"
+          objectFit="cover"
+        />
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
+          <Link href="/">
+            <Image
+              src="/logo.png"
+              alt="Furniro Logo"
+              width={32}
+              height={20}
+              className="w-12 h-8"
+            />
+          </Link>
+          <h4 className="text-4xl font-bold">CheckOut</h4>
+          <h5 className="flex items-center text-sm md:text-xl mb-4 space-x-1">
+            <Link className="font-bold text-xl" href="/">
+              Home
             </Link>
-            <h4 className="text-4xl font-bold">Checkout</h4>
-            <h5 className="flex items-center text-sm md:text-xl mb-4 space-x-1">
-              <Link className="font-bold text-2xl" href="/">
-                Home
-              </Link>
-              <MdKeyboardArrowRight className="mt-2 text-2xl" />
-              <Link className="mt-2 md:mt-0" href="#">
-                Checkout
-              </Link>
-            </h5>
-          </div>
+            <MdKeyboardArrowRight className="mt-2 text-2xl" />
+            <span>CheckOut</span>
+          </h5>
         </div>
       </div>
-      <div className="mb-11  min-h-screen">
-        <div className=" max-w-7xl mx-auto mt-16 grid grid-cols-1 lg:grid-cols-2  gap-8">
-          {/* Billing Details */}
-          <form
-            className=" md:pl-32 px-6 md:px-0 space-y-6"
-          >
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+      <div className="w-full bg-gray-50 py-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 px-6 lg:px-0">
+          {/* Billing Details Section */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800">
               Billing details
             </h2>
-            <div className="grid grid-cols-1 md:flex gap-7 ">
-              {/* First Name */}
+            <form className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-gray-600 mb-1">First Name</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-md p-2"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-600 mb-1">Last Name</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 rounded-md p-2"
+                    required
+                  />
+                </div>
+              </div>
               <div>
-                <label className="block text-gray-600 mb-1">First Name</label>
+                <label className="block text-gray-600 mb-1">
+                  Company Name (Optional)
+                </label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
+                  name="companyName"
+                  value={formData.companyName}
                   onChange={handleInputChange}
-                  className="md:w-[211px] w-full h-[50px] border p-2 rounded"
+                  className="w-full border border-gray-300 rounded-md p-2"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">
+                  Country / Region
+                </label>
+                <select
+                  name="country"
+                  value={formData.country}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md p-2"
+                >
+                  <option value="Sri Lanka">Sri Lanka</option>
+                  <option value="Pakistan">Pakistan</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">
+                  Street Address
+                </label>
+                <input
+                  type="text"
+                  name="streetAddress"
+                  value={formData.streetAddress}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md p-2"
                   required
                 />
               </div>
-              {/* Last Name */}
               <div>
-                <label className="block text-gray-600 mb-1">Last Name</label>
+                <label className="block text-gray-600 mb-1">Town / City</label>
                 <input
                   type="text"
-                  name="lastName"
-                  value={formData.lastName}
+                  name="city"
+                  value={formData.city}
                   onChange={handleInputChange}
-                  className="md:w-[211px] w-full h-[50px] border p-2 rounded"
+                  className="w-full border border-gray-300 rounded-md p-2"
                   required
                 />
               </div>
-            </div>
-            {/* Company Name */}
-            <div>
-              <label className="block text-gray-600 mb-1">
-                Company Name (Optional)
-              </label>
-              <input
-                type="text"
-                name="companyName"
-                value={formData.companyName}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-              />
-            </div>
-            {/* Country */}
-            <div>
-              <label className="block text-gray-600 mb-1">
-                Country / Region
-              </label>
-              <select
-                name="country"
-                value={formData.country}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-              >
-                <option>Sri Lanka</option>
-                <option>Pakistan</option>
-                <option>India</option>
-                <option>UAE</option>
-              </select>
-            </div>
-            {/* Address */}
-            <div>
-              <label className="block text-gray-600 mb-1">Street Address</label>
-              <input
-                type="text"
-                name="streetAddress"
-                value={formData.streetAddress}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-                required
-              />
-            </div>
-            {/* Town/City */}
-            <div>
-              <label className="block text-gray-600 mb-1">Town / City</label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-                required
-              />
-            </div>
-            {/* Province */}
-            <div>
-              <label className="block text-gray-600 mb-1">Province</label>
-              <select
-                name="province"
-                value={formData.province}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-              >
-                <option>Western Province</option>
-                <option>Central Province</option>
-                <option>Eastern Province</option>
-              </select>
-            </div>
-            {/* ZIP Code */}
-            <div>
-              <label className="block text-gray-600 mb-1">ZIP Code</label>
-              <input
-                type="text"
-                name="zipCode"
-                value={formData.zipCode}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-                required
-              />
-            </div>
-            {/* Phone */}
-            <div>
-              <label className="block text-gray-600 mb-1">Phone</label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-                required
-              />
-            </div>
-            {/* Email Address */}
-            <div>
-              <label className="block text-gray-600 mb-1">Email address</label>
-              <input
-                type="email"
-                name="Email address"
-                value={formData.emailAddress}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-                required
-              />
-            </div>
-            <div>
-              <input
-                type="text"
-                name="Additional Information"
-                value={formData.additionalInformation}
-                onChange={handleInputChange}
-                className="md:w-[453px] w-full h-[50px] border p-2 rounded"
-                required
-              />
-            </div>
-          </form>
+              <div>
+                <label className="block text-gray-600 mb-1">Province</label>
+                <select
+                  name="province"
+                  value={formData.province}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md p-2"
+                >
+                  <option value="Western Province">Western Province</option>
+                  <option value="Central Province">Central Province</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">Zip Code</label>
+                <input
+                  type="text"
+                  name="zipCode"
+                  value={formData.zipCode}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">Phone</label>
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="emailAddress"
+                  value={formData.emailAddress}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 mb-1">
+                  Additional Information
+                </label>
+                <textarea
+                  name="additionalInformation"
+                  value={formData.additionalInformation}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  rows={4}
+                />
+              </div>
+            </form>
+          </div>
 
-          {/* Order Summary */}
-          <div className=" p-6 md:pr-20 ">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Product</h2>
-            {/* Product Summary */}
-            <div className="flex justify-between mb-2">
-              <span className="text-gray-500">Asgaard Sofa x 1</span>
-              <span className="font-medium">Rs. 250,000.00</span>
+          {/* Order Summary Section */}
+          <div className="space-y-6 border h-[400px] border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+            <h2 className="text-2xl font-bold text-gray-800">Your Order</h2>
+            <div className="space-y-4">
+              {cartItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center border-b pb-4"
+                >
+                  <div>
+                    <h4 className="text-base font-medium text-gray-700">
+                      {item.title}
+                    </h4>
+                    <p className="text-sm text-gray-500">
+                      {item.quantity} x Rs.{" "}
+                      {Number(item.price).toLocaleString()}
+                    </p>
+                  </div>
+                  <p className="text-base font-bold text-gray-800">
+                    Rs. {(item.price * item.quantity).toLocaleString()}
+                  </p>
+                </div>
+              ))}
             </div>
-            {/* Subtotal */}
-            <div className="flex justify-between mb-2">
-              <span>Subtotal</span>
-              <span className="font-medium">Rs. 250,000.00</span>
-            </div>
-            {/* Total */}
-            <div className="flex justify-between text-lg font-medium  mb-4">
+            <div className="flex justify-between items-center text-lg font-bold text-gray-800">
               <span>Total</span>
-              <span className="text-yellow-700">Rs. 250,000.00</span>
+              <span>Rs. {calculateSubtotal().toLocaleString()}</span>
             </div>
-            {/* Payment Methods */}
-            <div className="space-y-2 text-gray-600 border-t pt-4">
-              <div>
-                <input
-                  type="radio"
-                  id="bank"
-                  name="paymentMethod"
-                  value="bank"
-                  checked={formData.paymentMethod === "bank"}
-                  onChange={handleInputChange}
-                />
-                <label htmlFor="bank" className="text-gray-950 ml-2">
-                  Direct Bank Transfer
-                </label>
-                <p className="text-gray-500 text-sm ml-6">
-                  Make your payment directly into our bank account. Please use
-                  your Order ID as the payment reference. Your order will not be
-                  shipped until the funds have cleared in our account.
-                </p>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  id="cash"
-                  name="paymentMethod"
-                  value="cash"
-                  onChange={handleInputChange}
-                />
-                <label htmlFor="cash" className="ml-2">
-                  Direct Bank Transfer
-                </label>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  id="cash"
-                  name="paymentMethod"
-                  value="cash"
-                  onChange={handleInputChange}
-                />
-                <label htmlFor="cash" className="ml-2">
-                  Cash On Delivery
-                </label>
-              </div>
+            <div className="mt-6">
+              <button className="w-full bg-black text-white py-2 rounded-md">
+                Place Order
+              </button>
             </div>
-            <p className="mt-3">
-              Your personal data will be used to support your experience
-              throughout this website, to manage access to your account, and for
-              other purposes described in our <b>privacy policy</b> .
-            </p>
-            {/* Submit Button */}
-            <button
-              type="submit"
-              form="checkoutForm"
-              className="w-52 mt-4  border md:mx-36 border-gray-900 md:px-12 py-2 rounded-xl  hover:bg-gray-300 transition"
-            >
-              Place Order
-            </button>
           </div>
         </div>
       </div>
-      <Feature />
-    </>
+    </div>
   );
 }

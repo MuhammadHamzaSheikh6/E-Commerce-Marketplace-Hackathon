@@ -2,6 +2,7 @@
 
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 interface IBanner {
@@ -16,7 +17,7 @@ interface IBanner {
 
 const fetchBannerData = async () => {
   return await client.fetch(
-    '*[_type == "banner"]{_id, topHeading, centerHeading, bottomHeading, buttonLink, image}'
+    '*[_type == "banner"]{_id, topHeading, centerHeading, bottomHeading, buttonLink, image, "alt": altText}'
   );
 };
 
@@ -42,18 +43,26 @@ export default function Banner() {
     return () => clearInterval(slideInterval);
   }, [banners.length]);
 
-  // If no banners are available, return null
-  if (!banners.length) return null;
+  // If no banners are available, return a loader
+  if (!banners.length)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="relative w-16 h-16 border-8 border-t-transparent border-yellow-500 rounded-full animate-spin">
+          <div className="absolute inset-0 border-yellow-700 border-8 border-t-8 border-t-transparent border-b-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
 
   return (
     <section
       className="relative w-full h-full overflow-hidden"
       aria-label="Banner Carousel"
     >
-      {/* Images */}
+      {/* Carousel Wrapper */}
       <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+        aria-live="polite"
       >
         {banners.map((banner, index) => (
           <figure
@@ -61,13 +70,13 @@ export default function Banner() {
             className="relative min-w-full h-full bg-cover bg-center"
             aria-hidden={index !== currentSlide}
           >
-            <img
+            <Image
               src={urlFor(banner.image).url()}
-              alt={banner.alt || "Banner Image"}
-              width={1000}
-              height={1000}
-              loading="lazy"
-              className=" w-full md:h-[400px] h-[170px] lg:h-[650px] object-cover "
+              alt={banner.alt || `Banner ${index + 1}`}
+              width={1920}
+              height={1080}
+              priority={index === 0}
+              className="w-full md:h-[400px] h-[170px] lg:h-[650px] object-cover"
             />
             <figcaption className="hidden md:block absolute top-1/2 md:pl-8 md:pr-5 md:pt-9 md:w-[360px] md:h-[280px] right-12 lg:w-[623px] lg:h-[423px] rounded-xl bg-[#FFF3E3] transform -translate-y-1/2">
               <h2 className="lg:text-xl font-semibold">{banner.topHeading}</h2>
@@ -80,6 +89,7 @@ export default function Banner() {
               <a
                 href={banner.buttonLink}
                 className="bg-[#B88E2F] hover:bg-[rgba(184,143,47,0.77)] md:mt-7 lg:mt-12 md:px-5 md:py-2 lg:px-12 lg:py-6 text-white font-bold inline-block"
+                aria-label={`Learn more about ${banner.centerHeading}`}
               >
                 BUY NOW
               </a>
@@ -88,7 +98,7 @@ export default function Banner() {
         ))}
       </div>
 
-      {/* Dots for navigation */}
+      {/* Navigation Dots */}
       <nav
         className="absolute bottom-4 w-full flex justify-center space-x-2"
         aria-label="Carousel Navigation"

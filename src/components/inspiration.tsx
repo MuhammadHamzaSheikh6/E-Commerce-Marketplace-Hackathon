@@ -1,72 +1,77 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
+import Image from "next/image";
 
 interface IProduct {
-  image: string;
   id: string;
-  description: string;
-  type: string;
-  link: string;
+  _id: string;
+  title: string;
+  shortDescription: string;
+  price: string;
+  oldPrice?: string;
+  discountPercentage?: string;
+  isNew?: boolean;
+  productImage: string;
+  tag: string;
+  category: string;
 }
 
-interface ITrendyProductPage {
-  mainHeading: string;
-  subHeading: string;
-  buttontext: string;
-  buttonlink: string;
-  products: IProduct[];
-}
-
-const fetchTrendyProducts = async () => {
-  return await client.fetch(
-    `*[_type == "trendyProductpage"][0]{mainHeading, subHeading, buttontext, buttonlink, products[]{id, image, description, type, link}}`
-  );
-};
-
-const TrendyProductsSection = () => {
-  const [data, setData] = useState<ITrendyProductPage | null>(null);
+export default function TrendyProductsSection() {
+  const [products, setProducts] = useState<IProduct[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getProducts = async () => {
-      const fetchedData = await fetchTrendyProducts();
-      setData(fetchedData || null);
+    const fetchProducts = async () => {
+      try {
+        const fetchedProducts: IProduct[] = await client.fetch(
+          `*[_type == "product" && tranding == true]{
+            _id, id, title, tag, category, shortDescription, 
+            discountPercentage, price, oldPrice, isNew, productImage
+          }`
+        );
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    getProducts();
+
+    fetchProducts();
   }, []);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % (data?.products.length || 1)); // Loop to start
+    setCurrentSlide((prev) => (prev + 1) % products.length); // Loop back to the first slide
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + (data?.products.length || 1)) % (data?.products.length || 1)); // Loop to end
+    setCurrentSlide((prev) => (prev - 1 + products.length) % products.length); // Loop back to the last slide
   };
 
-  if (!data) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-600">Loading...</p>
-      </div>
-    );
-  }
+  if (isLoading) return <div className="text-center">Loading products...</div>;
+  if (!products.length) return <div className="text-center">No products found.</div>;
 
   return (
-    <div
-      className="relative bg-[#FCF8F3] h-[490px] md:h-[570px] w-full bg-cover bg-center flex flex-col md:flex-row items-center"
-    >
+    <section className="relative bg-[#FCF8F3] h-[490px] md:h-[570px] w-full bg-cover bg-center flex flex-col md:flex-row items-center">
       {/* Left Section */}
-      <div className="md:pl-16 pl-4 py-5  w-full md:py-20 text-black space-y-4 md:space-y-6">
+      <div className="md:pl-16 pl-4 py-5 w-full md:py-20 text-black space-y-4 md:space-y-6">
         <h1 className="md:text-4xl text-2xl font-bold text-gray-800 leading-tight">
-          {data.mainHeading}
+          50+ Beautiful Rooms Inspiration
         </h1>
-        <p className="md:text-lg lg:pr-40 text-gray-600">{data.subHeading}</p>
-        <a href={data.buttonlink}>
-          <button className="bg-[#B88E2F] text-white mt-5 px-2 py-2 md:px-8 md:py-3 text-lg font-medium hover:bg-[#c89b32] transition duration-300">
-            {data.buttontext}
+        <p className="md:text-lg lg:pr-16 text-gray-600">
+          Our designers have created a wide variety of beautiful room prototypes to inspire you.
+        </p>
+        <a href="/explore">
+          <button
+            className="bg-[#B88E2F] text-white mt-5 px-4 py-2 md:px-8 md:py-3 text-lg font-medium 
+            hover:bg-[#c89b32] transition duration-300"
+          >
+            Explore More
           </button>
         </a>
       </div>
@@ -75,28 +80,35 @@ const TrendyProductsSection = () => {
       <div className="relative flex items-center w-full md:w-2/3 justify-center mt-6 md:mt-0">
         {/* Image Slider */}
         <div className="relative w-full md:w-[500px] lg:w-[850px] overflow-hidden">
-          {/* Slider Container */}
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentSlide * 35}%)` }}
           >
-            {data.products.map((product, index) => (
+            {products.map((product, index) => (
               <div
-                key={index}
-                className="relative w-44 h-52 md:w-[300px]  md:h-[460px] lg:w-[370px]  lg:h-[520px] mx-2 flex-shrink-0"
+                key={product._id}
+                className="relative w-44 h-52 md:w-[300px] md:h-[460px] lg:w-[370px] lg:h-[520px] mx-2 flex-shrink-0"
               >
-                <img
-                  src={urlFor(product.image).url()}
-                  alt={`Product ${index}`}
-                  className="w-full h-full object-cover"
+                <Image
+                  src={urlFor(product.productImage).width(400).height(400).url()}
+                  alt={`Product: ${product.title}`}
+                  className="w-full h-full rounded-sm object-cover"
+                  loading="lazy"
+                  width={370} // Adjust based on product image width
+                  height={520} // Adjust based on product image height
                 />
-                {/* Description Box */}
-                <div className="absolute md:py-4 py-1 px-1 md:px-5 font-light items-center justify-center bottom-4 left-4 bg-white bg-opacity-70 text-black text-sm md:w-36 md:h-20">
-                  {product.id} - {product.description} <br />
-                  <span className="font-bold text-sm md:text-lg">{product.type}</span>
+                <div
+                  className="absolute bottom-4 left-4 bg-white bg-opacity-70 text-black text-sm 
+                  md:w-36 md:h-20 p-2 md:p-4 font-light"
+                >
+                  {String(index + 1).padStart(2, "0")} - {product.category} <br />
+                  <span className="font-bold text-sm md:text-lg">{product.tag}</span>
                 </div>
-                <a href={product.link}>
-                  <div className="absolute bottom-4 left-[102px] md:left-40 p-1 md:p-2 bg-[#B88E2F]">
+                <a href={`/product/${product._id}`}>
+                  <div
+                    className="absolute cursor-pointer bottom-4 left-[102px] md:left-40 p-1 md:p-2 bg-[#B88E2F] 
+                     shadow hover:bg-[#c89b32] transition"
+                  >
                     <FaArrowRightLong />
                   </div>
                 </a>
@@ -107,7 +119,9 @@ const TrendyProductsSection = () => {
           {/* Left Arrow Button */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 hidden top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:bg-gray-200 transition duration-300"
+            aria-label="Previous Slide"
+            className="absolute text-xl left-5 top-1/2 transform -translate-y-1/2 bg-white text-[#B88E2F] 
+            md:py-2 md:px-4 px-3 rounded-full shadow-md hover:bg-gray-200 transition duration-300"
           >
             ❮
           </button>
@@ -115,14 +129,14 @@ const TrendyProductsSection = () => {
           {/* Right Arrow Button */}
           <button
             onClick={nextSlide}
-            className="absolute text-xl right-5 top-1/2 transform -translate-y-1/2 bg-white text-[#B88E2F] md:py-2 md:px-4 px-3 rounded-full shadow-md hover:bg-gray-200 transition duration-300"
+            aria-label="Next Slide"
+            className="absolute text-xl right-5 top-1/2 transform -translate-y-1/2 bg-white text-[#B88E2F] 
+            md:py-2 md:px-4 px-3 rounded-full shadow-md hover:bg-gray-200 transition duration-300"
           >
             ❯
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
-};
-
-export default TrendyProductsSection;
+}
