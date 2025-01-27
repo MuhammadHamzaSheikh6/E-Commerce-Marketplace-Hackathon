@@ -26,7 +26,7 @@ interface IBlog {
 interface ICategory {
   _id: string;
   title: string;
-  blogCount: number; 
+  blogCount: number;
 }
 
 export default function BlogPage() {
@@ -91,18 +91,6 @@ export default function BlogPage() {
   };
 
   const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
-
-  // const handleNextPage = () => {
-  //   if (currentPage < totalPages) {
-  //     setCurrentPage((prev) => prev + 1);
-  //   }
-  // };
-
-  // const handlePrevPage = () => {
-  //   if (currentPage > 1) {
-  //     setCurrentPage((prev) => prev - 1);
-  //   }
-  // };
 
   if (isLoading) {
     return (
@@ -211,7 +199,7 @@ export default function BlogPage() {
                 <h2 className="text-xl font-bold">{blog.title}</h2>
                 <p className="text-gray-600 mt-4">{blog.shortDescription}</p>
                 <Link
-                  href={`/blog/${blog._id}`}
+                  href={`/blog/${blog._id}`} // Dynamic route for blog details
                   className="text-blue-600 hover:underline mt-4 inline-block"
                 >
                   Read more

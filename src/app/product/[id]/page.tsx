@@ -1,10 +1,12 @@
+"use client"; // Add this directive to make it a client-side component
+import { useParams } from 'next/navigation';
 import { client } from '@/sanity/lib/client';
 import { FaAngleRight } from 'react-icons/fa';
-import Head from 'next/head'; // For adding meta tags to the page
+import Head from 'next/head';
 import Products from '@/components/product';
 import Detail from '@/components/singlePerduct/detail';
 import Link from 'next/link';
-
+import { useEffect, useState } from 'react';
 
 interface IProduct {
   _id: string;
@@ -27,7 +29,6 @@ interface IProduct {
   category?: string;
   tags?: string;
 }
-
 
 const getProductDataById = async (id: string) => {
   try {
@@ -60,18 +61,41 @@ const getProductDataById = async (id: string) => {
   }
 };
 
-export default async function ProductPage({ params }: { params: { id: string } }) {
-  const { id } = params;
-  const product: IProduct = await getProductDataById(id);
+export default function ProductPage() {
+  const params = useParams(); // Use useParams hook to access params
+  const productId = params.id as string; // Extract product ID from params
 
-  if (!product) {
-    return <div className="text-center">Product not found.</div>;
-  }
+  const [product, setProduct] = useState<IProduct | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const data = await getProductDataById(productId);
+        if (!data) {
+          setError('Product not found.');
+          return;
+        }
+        setProduct(data);
+      } catch (error) {
+        console.error('Failed to fetch product data:', error);
+        setError('Failed to fetch product data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [productId]);
+
+  if (loading) return <div className="text-center">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (!product) return <div className="text-center">Product not found.</div>;
 
   return (
     <>
       <Head>
-        {/* SEO meta tags */}
         <title>{product.title} | Your Shop Name</title>
         <meta name="description" content={product.shortDescription || product.description} />
         <meta name="keywords" content={`Shop, ${product.category}, ${product.tags}, ${product.title}`} />
@@ -106,8 +130,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
         </div>
 
         {/* Product Details */}
-        <Detail id={params.id} />
-
+        <Detail id={productId} />
 
         {/* Related Products Section */}
         <div className="py-16">

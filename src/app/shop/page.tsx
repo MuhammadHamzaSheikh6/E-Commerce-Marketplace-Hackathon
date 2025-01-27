@@ -144,7 +144,6 @@ export default function ShopProducts() {
       </div>
 
       <Filter
-        isNew={isNew}
         setIsNew={setIsNew}
         discounted={discounted}
         setDiscounted={setDiscounted}
