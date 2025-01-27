@@ -153,7 +153,7 @@ export default function ShopProducts() {
         setShow={setShow}
         sortBy={sortBy}
         setSortBy={setSortBy}
-        searchQuery={searchQuery} // Pass searchQuery
+        searchQuery={searchQuery} // Pass searchQuerydcfsdvd
         setSearchQuery={setSearchQuery} // Pass setSearchQuery
       />
       <div className="py-12 md:px-5 lg:mx-16">
