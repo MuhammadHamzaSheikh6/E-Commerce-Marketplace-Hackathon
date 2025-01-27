@@ -5,6 +5,7 @@ export async function POST(request: Request) {
   try {
     const { yourname, email, subject, message } = await request.json();
 
+    // Validate required fields
     if (!yourname || !email || !subject || !message) {
       return NextResponse.json(
         { message: "All fields are required." },
@@ -12,6 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
+    // Create a new document in Sanity
     await client.create({
       _type: "contactForm",
       yourname,
@@ -26,9 +28,15 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error("Sanity Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
+    // Handle specific Sanity errors
+    let errorMessage = "Failed to submit form.";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
     return NextResponse.json(
-      { message: "Failed to submit form.", error: errorMessage },
+      { message: errorMessage },
       { status: 500 }
     );
   }
