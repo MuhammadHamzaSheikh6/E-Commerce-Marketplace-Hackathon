@@ -57,7 +57,7 @@ export default function BedroomPage() {
           <Image
             src="/shop/banner11.png"
             alt="Shop Banner"
-            layout="fill"
+            loading="lazy"
             objectFit="cover"
             className="opacity-70 brightness-75"
             priority
@@ -70,6 +70,7 @@ export default function BedroomPage() {
                 width={32}
                 height={20}
                 className="w-12 h-8"
+                loading="lazy"
               />
             </Link>
             <h1 className="text-4xl font-bold">Living</h1>
@@ -99,6 +100,7 @@ export default function BedroomPage() {
                 height={301}
                 className="w-[285px] h-[301px] object-cover"
                 quality={85}
+                loading="lazy"
               />
               {item.dicountPercentage && (
                 <span

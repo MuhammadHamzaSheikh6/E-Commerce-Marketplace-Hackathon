@@ -21,9 +21,7 @@ export default function ShopProducts() {
   const [priceRange, setPriceRange] = useState<number[]>([0, 10000]);
   const [show, setShow] = useState<number>(16);
   const [sortBy, setSortBy] = useState<string>("default");
-  const [searchQuery, setSearchQuery] = useState<string>("");  // Add searchQuery state
-
-  
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Add searchQuery state
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -67,8 +65,8 @@ export default function ShopProducts() {
     }
 
     if (searchQuery) {
-      filtered = filtered.filter((item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) // Apply search filter
+      filtered = filtered.filter(
+        (item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()) // Apply search filter
       );
     }
 
@@ -83,7 +81,7 @@ export default function ShopProducts() {
     }
 
     setFilteredData(filtered);
-  }, [isNew, discounted, priceRange, sortBy,searchQuery, data]);
+  }, [isNew, discounted, priceRange, sortBy, searchQuery, data]);
 
   // Pagination Logic
   const indexOfLastProduct = currentPage * show;
@@ -100,11 +98,52 @@ export default function ShopProducts() {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-screen ">
-    <div className="relative w-16 h-16 border-8 border-t-transparent border-yellow-500 rounded-full animate-spin">
-      <div className="absolute inset-0 border-yellow-700 border-8 border-t-8 border-t-transparent border-b-transparent rounded-full animate-spin"></div>
-    </div>
-  </div>
+    return (
+      <div className="w-full h-screen flex justify-center items-center ">
+        <div className="text-center space-y-6">
+          <Image
+            src="/logo.png"
+            alt="Loading Logo"
+            width={120}
+            height={80}
+            className="mx-auto mb-4 animate-pulse"
+            loading="lazy"
+          />
+          <div className="text-3xl font-bold text-black animate-pulse">
+            Furniro...
+          </div>
+          <div className="flex justify-center space-x-2 text-yellow-700">
+            <span className="dot text-5xl">.</span>
+            <span className="dot text-5xl">.</span>
+            <span className="dot text-5xl">.</span>
+          </div>
+        </div>
+
+        <style jsx>{`
+          .dot {
+            animation: blink 1.5s infinite step-start;
+          }
+
+          .dot:nth-child(1) {
+            animation-delay: 0s;
+          }
+
+          .dot:nth-child(2) {
+            animation-delay: 0.3s;
+          }
+
+          .dot:nth-child(3) {
+            animation-delay: 0.6s;
+          }
+
+          @keyframes blink {
+            50% {
+              opacity: 0;
+            }
+          }
+        `}</style>
+      </div>
+    );
   }
 
   return (
@@ -118,6 +157,7 @@ export default function ShopProducts() {
             layout="fill"
             objectFit="cover"
             className=""
+            loading="lazy"
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
             <Link href="/">
@@ -127,6 +167,7 @@ export default function ShopProducts() {
                 width="32"
                 height="20"
                 className="w-12 h-8"
+                loading="lazy"
               />
             </Link>
             <h4 className="text-4xl font-bold">Shop</h4>

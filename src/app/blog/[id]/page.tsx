@@ -71,6 +71,7 @@ export default async function BlogDetailPage({
             width={1200}
             height={600}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
           <div className="p-6">
             <div className="text-sm text-gray-500 flex items-center gap-4 mb-4">

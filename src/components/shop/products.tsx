@@ -3,22 +3,70 @@ import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { IProduct } from "@/types";
+import { IoMdShare } from "react-icons/io";
+import { MdCompareArrows } from "react-icons/md";
+import { FaRegHeart } from "react-icons/fa6";
+import toast, { Toaster } from "react-hot-toast";
 
 interface ProductGridProps {
   products: IProduct[];
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
+  const handleWishlist = (product: IProduct) => {
+    if (!product) return;
+
+    // Retrieve the wishlist from localStorage
+    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+
+    // Check if the product is already in the wishlist
+    const isAlreadyInWishlist = wishlist.some(
+      (item: IProduct) => item._id === product._id
+    );
+
+    if (isAlreadyInWishlist) {
+      toast.success("Product is already in your wishlist!", {
+        position: "top-right",
+        duration: 3000,
+        style: {
+          background: "#f87171",
+          color: "white",
+        },
+      });
+      return;
+    }
+
+    // Add the selected product to the wishlist
+    const updatedWishlist = [...wishlist, product];
+
+    // Save the updated wishlist back to localStorage
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+    toast.success("Product added to wishlist!", {
+      position: "top-right",
+      duration: 3000,
+      style: {
+        background: "#B88E2F",
+        color: "white",
+      },
+    });
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <Toaster />
       {products.map((item) => (
-        <div key={item._id} className="relative group bg-gray-100 overflow-hidden">
+        <div
+          key={item._id}
+          className="relative group bg-gray-100 overflow-hidden"
+        >
           <Image
-              src={urlFor(item.productImage).width(1000).height(1000).url()}
+            src={urlFor(item.productImage).width(1000).height(1000).url()}
             alt={`Image of ${item.title}`}
             width={1000}
             height={1000}
             className="w-[290px] h-[301px] object-cover"
+            loading="lazy"
           />
           {item.dicountPercentage && (
             <span
@@ -58,12 +106,31 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
               )}
             </div>
           </div>
-          <div className="absolute inset-0 bg-gray-800 bg-opacity-50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <Link href={`/product/${item._id}`}>
-              <button className="bg-white text-[#B88E2F] px-8 py-2 mb-2 font-medium shadow">
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <Link href={`/product/${item._id}`} legacyBehavior>
+              <a className="bg-white text-yellow-600 px-6 py-2 mb-2 font-medium rounded shadow">
                 View Details
-              </button>
+              </a>
             </Link>
+              <div className="flex space-x-4">
+                <button className="flex items-center gap-1 hover:text-red-500 text-white">
+                  <IoMdShare />
+                  <span>Share</span>
+                </button>
+                <a href={`/comparison/${item._id}`}>
+                  <button className="flex items-center gap-1 hover:text-red-500 text-white">
+                    <MdCompareArrows />
+                    <span>Compare</span>
+                  </button>
+                </a>
+                <button
+                  onClick={() => handleWishlist(item)}
+                  className="flex items-center gap-1 text-white hover:text-red-500"
+                >
+                  <FaRegHeart />
+                  <span>Like</span>
+                </button>
+              </div>
           </div>
         </div>
       ))}

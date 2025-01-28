@@ -28,6 +28,7 @@ export default function BottomPart() {
             width="1000"
             height="1000"
             className="h-[348px] w-[605px] rounded-md "
+            loading="lazy"
           />
           <Image
             src="/single/2.jpg"
@@ -35,6 +36,7 @@ export default function BottomPart() {
             width="1000"
             height="1000"
             className="h-[348px] w-[605px] rounded-md "
+            loading="lazy"
           />
         </div>
       </div>

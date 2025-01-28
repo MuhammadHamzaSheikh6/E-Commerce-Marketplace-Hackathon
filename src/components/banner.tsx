@@ -46,10 +46,49 @@ export default function Banner() {
   // If no banners are available, return a loader
   if (!banners.length)
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="relative w-16 h-16 border-8 border-t-transparent border-yellow-500 rounded-full animate-spin">
-          <div className="absolute inset-0 border-yellow-700 border-8 border-t-8 border-t-transparent border-b-transparent rounded-full animate-spin"></div>
+      <div className="w-full h-screen flex justify-center items-center ">
+        <div className="text-center space-y-6">
+          <Image
+            src="/logo.png"
+            alt="Loading Logo"
+            width={120}
+            height={80}
+            className="mx-auto mb-4 animate-pulse"
+            loading="lazy"
+          />
+          <div className="text-3xl font-bold text-black animate-pulse">
+            Furniro...
+          </div>
+          <div className="flex justify-center space-x-2 text-yellow-700">
+            <span className="dot text-5xl">.</span>
+            <span className="dot text-5xl">.</span>
+            <span className="dot text-5xl">.</span>
+          </div>
         </div>
+
+        <style jsx>{`
+          .dot {
+            animation: blink 1.5s infinite step-start;
+          }
+
+          .dot:nth-child(1) {
+            animation-delay: 0s;
+          }
+
+          .dot:nth-child(2) {
+            animation-delay: 0.3s;
+          }
+
+          .dot:nth-child(3) {
+            animation-delay: 0.6s;
+          }
+
+          @keyframes blink {
+            50% {
+              opacity: 0;
+            }
+          }
+        `}</style>
       </div>
     );
 

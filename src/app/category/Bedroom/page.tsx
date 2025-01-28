@@ -67,6 +67,7 @@ export default function BedroomPage() {
             alt="Bedroom Shop Banner"
             layout="fill"
             objectFit="cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
             <Link href="/">
@@ -76,6 +77,7 @@ export default function BedroomPage() {
                 width={32}
                 height={20}
                 className="w-12 h-8"
+                loading="lazy"
               />
             </Link>
             <h4 className="text-4xl font-bold">Bedroom</h4>

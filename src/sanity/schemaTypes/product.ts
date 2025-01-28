@@ -169,5 +169,127 @@ export const product = defineType({
       type: "boolean",
       description: "Mark if the product is tranding.",
     },
+    // New field for features
+    {
+      name: "features",
+      title: "Features",
+      type: "object",
+      fields: [
+        // General Features
+        {
+          name: "salesPackage",
+          title: "Sales Package",
+          type: "string",
+        },
+        {
+          name: "modelNumber",
+          title: "Model Number",
+          type: "string",
+        },
+        {
+          name: "secondaryMaterial",
+          title: "Secondary Material",
+          type: "string",
+        },
+        {
+          name: "configuration",
+          title: "Configuration",
+          type: "string",
+        },
+        {
+          name: "upholsteryMaterial",
+          title: "Upholstery Material",
+          type: "string",
+        },
+        {
+          name: "upholsteryColor",
+          title: "Upholstery Color",
+          type: "string",
+        },
+        // Product Features
+        {
+          name: "fillingMaterial",
+          title: "Filling Material",
+          type: "string",
+        },
+        {
+          name: "finishType",
+          title: "Finish Type",
+          type: "string",
+        },
+        {
+          name: "adjustableHeadrest",
+          title: "Adjustable Headrest",
+          type: "string",
+        },
+        {
+          name: "maximumLoadCapacity",
+          title: "Maximum Load Capacity",
+          type: "string",
+        },
+        {
+          name: "originOfManufacture",
+          title: "Origin of Manufacture",
+          type: "string",
+        },
+        // Dimensions
+        {
+          name: "width",
+          title: "Width",
+          type: "string",
+        },
+        {
+          name: "height",
+          title: "Height",
+          type: "string",
+        },
+        {
+          name: "depth",
+          title: "Depth",
+          type: "string",
+        },
+        {
+          name: "weight",
+          title: "Weight",
+          type: "string",
+        },
+        {
+          name: "seatHeight",
+          title: "Seat Height",
+          type: "string",
+        },
+        {
+          name: "legHeight",
+          title: "Leg Height",
+          type: "string",
+        },
+        // Warranty
+        {
+          name: "warrantySummary",
+          title: "Warranty Summary",
+          type: "string",
+        },
+        {
+          name: "warrantyServiceType",
+          title: "Warranty Service Type",
+          type: "string",
+        },
+        {
+          name: "coveredInWarranty",
+          title: "Covered in Warranty",
+          type: "string",
+        },
+        {
+          name: "notCoveredInWarranty",
+          title: "Not Covered in Warranty",
+          type: "string",
+        },
+        {
+          name: "domesticWarranty",
+          title: "Domestic Warranty",
+          type: "string",
+        },
+      ],
+    },
   ],
 });

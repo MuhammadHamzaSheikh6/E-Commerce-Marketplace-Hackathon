@@ -102,6 +102,7 @@ export default function BlogPage() {
             width={120}
             height={80}
             className="mx-auto mb-4 animate-pulse"
+            loading="lazy"
           />
           <div className="text-3xl font-bold text-black animate-pulse">Furniro...</div>
           <div className="flex justify-center space-x-2 text-yellow-700">
@@ -149,6 +150,7 @@ export default function BlogPage() {
           layout="fill"
           objectFit="cover"
           className=""
+          loading="lazy"
         />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
           <Link href="/">
@@ -158,6 +160,7 @@ export default function BlogPage() {
               width="32"
               height="20"
               className="w-12 h-8"
+              loading="lazy"
             />
           </Link>
           <h4 className="text-4xl font-bold">Blog</h4>
@@ -183,6 +186,7 @@ export default function BlogPage() {
                 width={1200}
                 height={600}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
               <div className="p-6">
                 <div className="text-sm text-gray-500 flex items-center gap-4 mb-4">
@@ -247,6 +251,7 @@ export default function BlogPage() {
                     width={1000}
                     height={1000}
                     className="w-[60px] h-[60px] rounded-md"
+                    loading="lazy"
                   />
                   <div>
                     <Link href={`/blog/${blog._id}`} className="text-blue-600 hover:underline">

@@ -144,6 +144,7 @@ const ImageGrid = () => {
             width={992}
             height={1000}
             className="w-full h-full object-cover rounded-lg shadow-lg transition-transform duration-500"
+            loading="lazy"
           />
 
           {/* Previous Button */}

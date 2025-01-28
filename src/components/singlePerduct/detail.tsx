@@ -1,10 +1,12 @@
 "use client";
+import { useLocalStorage } from "@/app/context/CartContext";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaFacebook, FaInstagram, FaMinus, FaPlus, FaTwitter } from "react-icons/fa6";
 import { MdOutlineStar } from "react-icons/md";
+
 
 export interface IProduct {
   title: string;
@@ -33,6 +35,8 @@ export default function Detail({ id }: { id: string }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cart, setCart] = useLocalStorage<IProduct[]>("cart", []);
+
 
   const productUrl = typeof window !== "undefined" ? window.location.href : "";
 
@@ -123,7 +127,6 @@ export default function Detail({ id }: { id: string }) {
   const handleCart = () => {
     if (!product) return;
 
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const updatedCart = [
       ...cart,
       {
@@ -134,7 +137,7 @@ export default function Detail({ id }: { id: string }) {
       },
     ];
 
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    setCart(updatedCart);
     alert("Product added to cart!");
   };
 

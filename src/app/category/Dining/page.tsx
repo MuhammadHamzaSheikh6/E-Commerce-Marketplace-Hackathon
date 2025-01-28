@@ -75,6 +75,7 @@ export default function BedroomPage() {
             alt="Dining Furniture Collection"
             layout="fill"
             objectFit="cover"
+            loading="lazy"
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
             <Link href="/">
@@ -84,6 +85,7 @@ export default function BedroomPage() {
                 width={32}
                 height={20}
                 className="w-12 h-8"
+                loading="lazy"
               />
             </Link>
             <h4 className="text-4xl font-bold">Dining</h4>
@@ -112,6 +114,7 @@ export default function BedroomPage() {
                 width={285}
                 height={301}
                 className="w-[285px] h-[301px] object-cover"
+                loading="lazy"
               />
               {item.dicountPercentage && (
                 <span className="absolute top-4 right-4 bg-[#E97171] text-white text-xs font-bold py-2 px-4 rounded-full">

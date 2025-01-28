@@ -57,6 +57,7 @@ export default function Checkout() {
           alt="Bedroom Shop Banner"
           layout="fill"
           objectFit="cover"
+          loading="lazy"
         />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
           <Link href="/">

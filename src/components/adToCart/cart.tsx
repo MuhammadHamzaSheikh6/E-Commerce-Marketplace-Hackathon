@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -11,6 +11,8 @@ import {
 import { IoCartOutline, IoClose } from "react-icons/io5";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { useLocalStorage } from "@/app/context/CartContext";
+import Link from "next/link";
 
 interface CartItem {
   productImage: string;
@@ -20,7 +22,7 @@ interface CartItem {
 }
 
 export default function AddToCart() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cart", []);
 
   // Function to fetch cart from localStorage
   const fetchCartFromStorage = () => {
@@ -44,7 +46,6 @@ export default function AddToCart() {
   const removeFromCart = (productIndex: number) => {
     setCartItems((prevCart) => {
       const updatedCart = prevCart.filter((_, index) => index !== productIndex);
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
       return updatedCart;
     });
   };
@@ -75,7 +76,9 @@ export default function AddToCart() {
 
         <SheetContent>
           <SheetHeader className="flex">
-            <SheetTitle className="text-lg font-semibold">Shopping Cart</SheetTitle>
+            <SheetTitle className="text-lg font-semibold">
+              Shopping Cart
+            </SheetTitle>
           </SheetHeader>
 
           <div className="mt-6">
@@ -95,9 +98,12 @@ export default function AddToCart() {
                         width={64}
                         height={64}
                         className="w-16 h-16 rounded-md"
+                        loading="lazy"
                       />
                       <div className="flex-1 mx-4">
-                        <h4 className="text-base font-semibold">{item.title}</h4>
+                        <h4 className="text-base font-semibold">
+                          {item.title}
+                        </h4>
                         <p className="text-sm text-gray-500">
                           {item.quantity} x Rs.{" "}
                           {Number(item.price).toLocaleString()}
@@ -129,24 +135,24 @@ export default function AddToCart() {
                 </div>
 
                 <div className="mt-6 flex justify-between space-x-2">
-                  <a
+                  <Link
                     href="/cart"
                     className="flex-1 bg-gray-200 py-2 text-center rounded-md text-sm font-medium"
                   >
                     Cart
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/checkout"
                     className="flex-1 bg-black text-center text-white py-2 rounded-md text-sm font-medium"
                   >
                     Checkout
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/comparison"
                     className="flex-1 text-center bg-gray-200 py-2 rounded-md text-sm font-medium"
                   >
                     Comparison
-                  </a>
+                  </Link>
                 </div>
               </>
             )}

@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
 
 const formSchema = z.object({
   yourname: z.string().min(2, "Name is too short").max(50),
@@ -49,19 +50,30 @@ const ContactPage: React.FC = () => {
         throw new Error(error.message || "Failed to submit form");
       }
   
-      alert("Form submitted successfully!");
+      toast.success("Form submitted successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        style: { background: "#4ade80", color: "white" }, // Success green
+      });
       form.reset(); // Reset form after successful submission
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error.message);
-        alert(error.message || "Failed to submit form");
+        toast.error(error.message || "Failed to submit form", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { background: "#f87171", color: "white" }, // Error red
+        });
       } else {
         console.error("An unknown error occurred");
-        alert("An unknown error occurred");
+        toast.error("An unknown error occurred", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { background: "#f87171", color: "white" }, // Error red
+        });
       }
     }
   }
-  
 
   return (
     <>
@@ -73,6 +85,7 @@ const ContactPage: React.FC = () => {
             layout="fill"
             objectFit="cover"
             className=""
+            loading="lazy"
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
             <Link href="/">
@@ -82,6 +95,7 @@ const ContactPage: React.FC = () => {
                 width={32}
                 height={20}
                 className="w-12 h-8"
+                loading="lazy"
               />
             </Link>
             <h4 className="text-4xl font-bold">Contact</h4>
@@ -210,6 +224,9 @@ const ContactPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* ToastContainer for toasts */}
+      <ToastContainer />
     </>
   );
 };

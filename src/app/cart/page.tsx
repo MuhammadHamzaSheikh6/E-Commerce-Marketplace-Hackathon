@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { AiFillDelete } from "react-icons/ai";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types"; // Import the correct type
+import { useLocalStorage } from "../context/CartContext";
 
 interface CartItem {
   title: string;
@@ -16,7 +17,7 @@ interface CartItem {
 }
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cart", []);
 
   useEffect(() => {
     try {
@@ -64,7 +65,9 @@ export default function Cart() {
           <Image
             src="/shop/banner11.png"
             alt="Shop Banner"
-            layout="fill"
+            loading="lazy"
+            width={1920}
+            height={1080}
             objectFit="cover"
             className="opacity-70 brightness-75"
           />
@@ -76,6 +79,7 @@ export default function Cart() {
                 width={32}
                 height={20}
                 className="w-12 h-8"
+                loading="lazy"
               />
             </Link>
             <h4 className="text-4xl font-bold">Cart</h4>
@@ -128,6 +132,7 @@ export default function Cart() {
                           width={80}
                           height={80}
                           className="rounded-md border border-gray-200"
+                          loading="lazy"
                         />
                         <h2 className="font-semibold text-lg">{item.title}</h2>
                       </td>

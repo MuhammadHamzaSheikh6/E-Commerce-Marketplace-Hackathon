@@ -26,7 +26,6 @@ export default function Header() {
               width={32}
               height={20}
               className="w-8 h-5"
-              priority
             />
           </Link>
           <Link href="/" aria-label="Furniro Home">
@@ -66,7 +65,9 @@ export default function Header() {
             className="text-gray-600 hover:text-gray-800"
             aria-label="Wishlist"
           >
+            <a href="/wishlist">
             <CiHeart size={24} />
+            </a>
           </button>
           <Cart />
         </div>
@@ -87,6 +88,7 @@ export default function Header() {
                       width={32}
                       height={20}
                       className="w-8 h-5"
+                      loading="lazy"
                     />
                   </Link>
                   <Link href="/" aria-label="Furniro Home">
