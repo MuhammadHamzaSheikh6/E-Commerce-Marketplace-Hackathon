@@ -15,8 +15,11 @@ import { FaBars, FaRegHeart } from "react-icons/fa6";
 import Cart from "./adToCart/cart";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { IoMdSearch } from "react-icons/io";
+import { usePathname } from "next/navigation"; // Import usePathname
 
 export default function Header() {
+  const pathname = usePathname(); // Get the current pathname
+
   // Performance Optimization: Preload critical resources
   const preloadResources = () => {
     return (
@@ -64,17 +67,24 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex gap-12" aria-label="Main Navigation">
-          {["Home", "Shop", "Blog", "Contact"].map((item) => (
-            <Link
-              key={item}
-              href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-              className="relative text-black after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 hover:after:w-full"
-              aria-label={`Navigate to ${item}`}
-              passHref
-            >
-              {item}
-            </Link>
-          ))}
+          {["Home", "Shop", "Blog", "Contact"].map((item) => {
+            const href = item === "Home" ? "/" : `/${item.toLowerCase()}`;
+            const isActive = pathname === href; // Check if the current route matches the link
+
+            return (
+              <Link
+                key={item}
+                href={href}
+                className={`relative text-black after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 hover:after:w-full ${
+                  isActive ? "after:w-full" : ""
+                }`}
+                aria-label={`Navigate to ${item}`}
+                passHref
+              >
+                {item}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Desktop Icons */}
@@ -140,17 +150,24 @@ export default function Header() {
               </SheetTitle>
               <SheetDescription>
                 <div className="grid gap-5 mt-1" aria-label="Mobile Navigation">
-                  {["Home", "Shop", "Blog", "Contact"].map((item) => (
-                    <Link
-                      key={item}
-                      href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                      className="relative text-black after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 hover:after:w-full"
-                      aria-label={`Navigate to ${item}`}
-                      passHref
-                    >
-                      {item}
-                    </Link>
-                  ))}
+                  {["Home", "Shop", "Blog", "Contact"].map((item) => {
+                    const href = item === "Home" ? "/" : `/${item.toLowerCase()}`;
+                    const isActive = pathname === href; // Check if the current route matches the link
+
+                    return (
+                      <Link
+                        key={item}
+                        href={href}
+                        className={`relative text-black after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 hover:after:w-full ${
+                          isActive ? "after:w-full" : ""
+                        }`}
+                        aria-label={`Navigate to ${item}`}
+                        passHref
+                      >
+                        {item}
+                      </Link>
+                    );
+                  })}
                 </div>
 
                 <div
@@ -168,7 +185,7 @@ export default function Header() {
                     </SignInButton>
                   </SignedOut>
                   <SignedIn>
-                    <UserButton/>
+                    <UserButton />
                   </SignedIn>
                   <button
                     className="text-gray-600 hover:text-gray-800"
