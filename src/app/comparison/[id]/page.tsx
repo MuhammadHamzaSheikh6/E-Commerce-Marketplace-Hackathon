@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Feature from "@/components/button/feature";
 import { urlFor } from "@/sanity/lib/image";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 interface IProduct {
   _id: string;
@@ -152,6 +153,7 @@ export default function ComparisonPage() {
       ],
     },
   ];
+
   const handleCart = (product: IProduct) => {
     if (!product) return;
 
@@ -176,40 +178,77 @@ export default function ComparisonPage() {
 
   return (
     <>
-      <div className="container mx-auto md:space-y-6">
-        <div className="md:flex justify-between mt-8 items-start space-x-4">
+      {/* Banner Section */}
+      <div className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh] ">
+        <Image
+          src="/shop/banner11.png"
+          alt="Shop Map"
+          layout="fill"
+          objectFit="cover"
+          className=""
+          loading="lazy"
+        />
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
+          <Link href="/">
+            <Image
+              src="/logo.png"
+              alt="Furniro Logo"
+              width={32}
+              height={20}
+              className="w-12 h-8"
+              loading="lazy"
+            />
+          </Link>
+          <h4 className="text-4xl font-bold">Product Comparison</h4>
+          <h5 className="flex items-center text-sm md:text-xl mb-4 space-x-1">
+            <Link className="font-bold text-2xl" href="/">
+              Home
+            </Link>
+            <MdKeyboardArrowRight className="mt-2 text-2xl" />
+            <a className="mt-1 md:mt-0" href="#">
+              Comparison
+            </a>
+          </h5>
+        </div>
+      </div>
+
+      <div className="container mx-auto p-4 md:space-y-6">
+        {/* Top Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0 md:space-x-4">
           {/* Left Section */}
-          <div className="md:w-1/3 md:pt-6 md:pl-16 space-y-3">
-            <h2 className="text-gray-800 text-3xl font-medium">
+          <div className="w-full md:w-1/3 space-y-3">
+            <h2 className="text-gray-800 text-2xl md:text-3xl font-medium">
               Go to Product page for more Products
             </h2>
             <Link
               href="/shop"
-              className="text-gray-500 pt-6 text-sm underline hover:text-black transition"
+              className="text-gray-500 text-sm underline hover:text-black transition"
             >
               View More
             </Link>
           </div>
 
           {/* Product Cards */}
-          <div className="md:grid md:grid-cols-2 md:gap-4 md:w-2/3">
+          <div className="w-full md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {allProducts.map((product) => {
               const isProductInComparison = selectedProducts.some(
                 (p) => p._id === product._id
               );
               return (
                 <div key={product._id} className="space-y-2 text-center">
-                  <Image
-                    src={urlFor(product.productImage)
-                      .width(1000)
-                      .height(1000)
-                      .url()}
-                    alt={product.title}
-                    width={1000}
-                    height={1000}
-                    className="w-[280px] h-[177px] bg-[#F9F1E7] rounded-md"
-                    loading="lazy"
-                  />
+                  <div className="w-full h-48 bg-[#F9F1E7] rounded-md flex items-center justify-center">
+                    <Image
+                      src={urlFor(product.productImage)
+                        .width(1000)
+                        .height(1000)
+                        .url()}
+                      alt={product.title}
+                      width={200}
+                      height={200}
+                      className="w-auto h-auto max-h-full"
+                      loading="lazy"
+                    />
+                  </div>
                   <h3 className="font-semibold text-gray-800">
                     {product.title}
                   </h3>
@@ -217,8 +256,8 @@ export default function ComparisonPage() {
                     onClick={() => toggleProductInComparison(product._id)}
                     className={`px-4 py-2 ${
                       isProductInComparison ? "bg-red-500" : "bg-yellow-500"
-                    } text-white rounded-lg shadow hover:bg-${
-                      isProductInComparison ? "red-600" : "yellow-600"
+                    } text-white rounded-lg shadow hover:${
+                      isProductInComparison ? "bg-red-600" : "bg-yellow-600"
                     } transition`}
                   >
                     {isProductInComparison
@@ -231,7 +270,7 @@ export default function ComparisonPage() {
           </div>
 
           {/* Add Product Section */}
-          <div className="md:w-1/3 flex flex-col md:pr-16 pt-6 md:items-end">
+          <div className="w-full md:w-1/3 flex flex-col items-end">
             <h2 className="text-gray-800 font-medium mb-2">Add A Product</h2>
             <div className="relative">
               <button
@@ -266,7 +305,7 @@ export default function ComparisonPage() {
         {/* Comparison Table */}
         <div className="flex flex-col md:flex-row justify-start pt-14 border-t border-gray-300">
           {/* Left Side - Feature Sections */}
-          <div className="w-1/4 p-4 border-r">
+          <div className="w-full md:w-1/4 p-4 border-r">
             {featureSections.map((section) => (
               <div key={section.title}>
                 <h2 className="font-bold text-lg mb-6">{section.title}</h2>
@@ -281,7 +320,7 @@ export default function ComparisonPage() {
 
           {/* Right Side - Product Data */}
           {selectedProducts.map((product) => (
-            <div key={product._id} className="w-1/4 p-4 border-r">
+            <div key={product._id} className="w-full md:w-1/4 p-4 border-r">
               {featureSections.map((section) => (
                 <div key={section.title}>
                   <h2 className="font-bold text-lg mb-6">{section.title}</h2>

@@ -66,7 +66,7 @@ export default function Header() {
             aria-label="Wishlist"
           >
             <a href="/wishlist">
-            <CiHeart size={24} />
+              <CiHeart size={24} />
             </a>
           </button>
           <Cart />
@@ -127,9 +127,11 @@ export default function Header() {
                     className="text-gray-600 hover:text-gray-800"
                     aria-label="Wishlist"
                   >
-                    <CiHeart size={24} />
+                    <a href="/wishlist">
+                      <CiHeart size={24} />
+                    </a>
                   </button>
-                  <Cart/>
+                  <Cart />
                 </div>
               </SheetDescription>
             </SheetHeader>

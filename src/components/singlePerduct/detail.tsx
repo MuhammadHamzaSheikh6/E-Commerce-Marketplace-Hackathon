@@ -297,7 +297,7 @@ export default function Detail({ id }: { id: string }) {
 
           <button className="flex place-items-center border-2 text-gray-700 px-10 py-3 rounded-md font-medium hover:border-black transition">
             <FaPlus className="mx-2" />
-            <a href="/camparison">Compare</a>
+            <a href={`/comparison/${id}`}>Compare</a>
           </button>
         </div>
 

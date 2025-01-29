@@ -86,7 +86,8 @@ export default function AddToCart() {
               <p>Your cart is empty</p>
             ) : (
               <>
-                <div className="space-y-6">
+                {/* Scrollable Area for Cart Items */}
+                <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
                   {cartItems.map((item, index) => (
                     <div
                       key={index}
@@ -119,6 +120,7 @@ export default function AddToCart() {
                   ))}
                 </div>
 
+                {/* Subtotal and Buttons */}
                 <div className="mt-6 border-t pt-4">
                   <div className="flex justify-between text-lg font-semibold">
                     <p>Subtotal</p>

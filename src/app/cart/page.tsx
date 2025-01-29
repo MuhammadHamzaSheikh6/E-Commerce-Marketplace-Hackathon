@@ -80,14 +80,14 @@ export default function Cart() {
               loading="lazy"
             />
           </Link>
-          <h4 className="text-4xl font-bold">Contact</h4>
+          <h4 className="text-4xl font-bold">Cart</h4>
           <h5 className="flex items-center text-sm md:text-xl mb-4 space-x-1">
             <Link className="font-bold text-2xl" href="/">
               Home
             </Link>
             <MdKeyboardArrowRight className="mt-2 text-2xl" />
             <a className="mt-1 md:mt-0" href="#">
-              Contact
+              Cart
             </a>
           </h5>
         </div>

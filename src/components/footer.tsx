@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="text-gray-400 border-t-2 pt-16 bg-white">
       <div className="container mx-auto px-4">
-        <div className="md:flex justify-between mx-10 md:mx-24">
+        <div className="md:flex justify-between mx-10 md:mx-0 lg:mx-28">
           {/* Address Section */}
           <div className="w-full md:w-1/4 mb-6 md:mb-0">
             <h2 className="text-xl text-gray-950 font-bold">Funiro</h2>

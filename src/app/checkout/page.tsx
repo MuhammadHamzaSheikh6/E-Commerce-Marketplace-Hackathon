@@ -224,7 +224,7 @@ export default function Checkout() {
           </div>
 
           {/* Order Summary Section */}
-          <div className="space-y-6 border h-[400px] border-gray-300 rounded-lg p-6 bg-white shadow-sm">
+          <div className="space-y-6 border max-h-max border-gray-300 rounded-lg p-6 bg-white shadow-sm">
             <h2 className="text-2xl font-bold text-gray-800">Your Order</h2>
             <div className="space-y-4">
               {cartItems.map((item, index) => (
