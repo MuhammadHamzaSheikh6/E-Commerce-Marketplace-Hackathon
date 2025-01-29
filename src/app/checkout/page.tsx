@@ -51,7 +51,7 @@ export default function Checkout() {
   return (
     <div>
       {/* Hero Section */}
-      <div className="relative w-full h-[50vh]">
+      <div className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh] ">
         <Image
           src="/shop/banner11.png"
           alt="Bedroom Shop Banner"

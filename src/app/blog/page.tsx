@@ -143,7 +143,7 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="relative w-full h-[50vh]">
+      <header className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh] ">
         <Image
           src="/shop/banner11.png"
           alt="Blog Header"

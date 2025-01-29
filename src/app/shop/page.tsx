@@ -150,7 +150,7 @@ export default function ShopProducts() {
     <div>
       <div className="w-full">
         {/* Hero Section */}
-        <div className="relative w-full h-[50vh] ">
+        <div className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh] ">
           <Image
             src="/shop/banner11.png"
             alt="Shop Map"
@@ -197,7 +197,7 @@ export default function ShopProducts() {
         searchQuery={searchQuery} // Pass searchQuerydcfsdvd
         setSearchQuery={setSearchQuery} // Pass setSearchQuery
       />
-      <div className="py-12 md:px-5 lg:mx-16">
+      <div className="py-12 md:px-5 px-7">
         <ProductGrid products={currentProducts} />
         <Pagination
           currentPage={currentPage}

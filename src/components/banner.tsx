@@ -115,19 +115,19 @@ export default function Banner() {
               width={1920}
               height={1080}
               priority={index === 0}
-              className="w-full md:h-[400px] h-[170px] lg:h-[650px] object-cover"
+              className="w-full md:h-[400px] h-[250px] lg:h-[650px] object-cover"
             />
-            <figcaption className="hidden md:block absolute top-1/2 md:pl-8 md:pr-5 md:pt-9 md:w-[360px] md:h-[280px] right-12 lg:w-[623px] lg:h-[423px] rounded-xl bg-[#FFF3E3] transform -translate-y-1/2">
-              <h2 className="lg:text-xl font-semibold">{banner.topHeading}</h2>
-              <h1 className="lg:text-5xl lg:my-4 md:text-2xl py-1 text-[#B88E2F] font-extrabold">
+            <figcaption className="md:block absolute top-1/2 py-1 px-2 md:pl-8 md:pr-5 md:pt-9 w-[190px] h-[140px] md:w-[360px] md:h-[280px] right-6 md:right-12 lg:w-[623px] lg:h-[423px] rounded-xl bg-[#FFF3E3] transform -translate-y-1/2">
+              <h2 className="lg:text-xl md:text-xl text-[13px] font-semibold">{banner.topHeading}</h2>
+              <h1 className="lg:text-5xl text-[12px] lg:my-4 md:text-2xl py-1 text-[#B88E2F] font-extrabold">
                 {banner.centerHeading}
               </h1>
-              <p className="lg:font-semibold text-gray-600 md:text-sm">
+              <p className=" lg:font-semibold text-[8px] text-gray-600 md:text-sm">
                 {banner.bottomHeading}
               </p>
               <a
                 href={banner.buttonLink}
-                className="bg-[#B88E2F] hover:bg-[rgba(184,143,47,0.77)] md:mt-7 lg:mt-12 md:px-5 md:py-2 lg:px-12 lg:py-6 text-white font-bold inline-block"
+                className="bg-[#B88E2F] cursor-pointer hover:bg-[rgba(184,143,47,0.77)] md:mt-7 py-1 px-1 lg:mt-12 md:px-5 md:py-2 lg:px-12 lg:py-6 text-[10px] lg:text-[20px] text-white font-bold inline-block"
                 aria-label={`Learn more about ${banner.centerHeading}`}
               >
                 BUY NOW

@@ -60,44 +60,41 @@ export default function Cart() {
   return (
     <div className="">
       {/* Banner Section */}
-      <div className="w-full">
-        <div className="relative w-full h-[50vh]">
-          <Image
-            src="/shop/banner11.png"
-            alt="Shop Banner"
-            loading="lazy"
-            width={1920}
-            height={1080}
-            objectFit="cover"
-            className="opacity-70 brightness-75"
-          />
-          <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
-            <Link href="/">
-              <Image
-                src="/logo.png"
-                alt="Logo"
-                width={32}
-                height={20}
-                className="w-12 h-8"
-                loading="lazy"
-              />
+      <div className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh] ">
+        <Image
+          src="/shop/banner11.png"
+          alt="Shop Map"
+          layout="fill"
+          objectFit="cover"
+          className=""
+          loading="lazy"
+        />
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
+          <Link href="/">
+            <Image
+              src="/logo.png"
+              alt="Furniro Logo"
+              width={32}
+              height={20}
+              className="w-12 h-8"
+              loading="lazy"
+            />
+          </Link>
+          <h4 className="text-4xl font-bold">Contact</h4>
+          <h5 className="flex items-center text-sm md:text-xl mb-4 space-x-1">
+            <Link className="font-bold text-2xl" href="/">
+              Home
             </Link>
-            <h4 className="text-4xl font-bold">Cart</h4>
-            <h5 className="flex items-center md:text-xl mb-4 space-x-1">
-              <Link className="font-bold text-2xl" href="/">
-                Home
-              </Link>
-              <MdKeyboardArrowRight className="mt-2 text-2xl" />
-              <Link className="mt-2 md:mt-0" href="#">
-                Cart
-              </Link>
-            </h5>
-          </div>
+            <MdKeyboardArrowRight className="mt-2 text-2xl" />
+            <a className="mt-1 md:mt-0" href="#">
+              Contact
+            </a>
+          </h5>
         </div>
       </div>
 
       {/* Cart Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 lg:mx-14 lg:mt-20 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 lg:mx-14 lg:mt-20 gap-6 px-4">
         {cartItems.length === 0 ? (
           <div className="lg:col-span-12 text-center mb-20">
             <h2 className="text-2xl font-semibold">Your cart is empty</h2>
@@ -109,8 +106,8 @@ export default function Cart() {
           </div>
         ) : (
           <>
-            <div className="lg:col-span-8">
-              <table className="w-full border-collapse">
+            <div className="lg:col-span-8 overflow-x-auto">
+              <table className="w-full border-collapse table-auto">
                 <thead className="bg-[#fdf3e8] text-sm">
                   <tr className="text-left">
                     <th className="py-4 px-4 font-medium">Product</th>
@@ -125,7 +122,7 @@ export default function Cart() {
                 <tbody>
                   {cartItems.map((item, index) => (
                     <tr key={index} className="border-b">
-                      <td className="py-6 px-4 flex items-center space-x-4">
+                      <td className="py-6 px-4 whitespace-nowrap">
                         <Image
                           src={getImageUrl(item.productImage)}
                           alt={item.title}
@@ -176,8 +173,10 @@ export default function Cart() {
                 </tbody>
               </table>
             </div>
-            <div className="lg:col-span-4 bg-[#fdf3e8] lg:h-[340px] rounded-md px-16 py-8">
-              <h2 className="text-2xl text-center font-bold mb-12">Cart Totals</h2>
+            <div className="lg:col-span-4 bg-[#fdf3e8] lg:h-[340px] rounded-md px-4 lg:px-16 py-8">
+              <h2 className="text-2xl text-center font-bold mb-12">
+                Cart Totals
+              </h2>
               <div className="flex justify-between text-gray-600 mb-7">
                 <p className="text-gray-950 font-semibold text-xl">Subtotal:</p>
                 <p>

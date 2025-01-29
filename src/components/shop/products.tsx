@@ -53,7 +53,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="grid px-4 lg:px-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <Toaster />
       {products.map((item) => (
         <div
@@ -65,7 +65,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
             alt={`Image of ${item.title}`}
             width={1000}
             height={1000}
-            className="w-[290px] h-[301px] object-cover"
+            className="object-cover"
             loading="lazy"
           />
           {item.dicountPercentage && (

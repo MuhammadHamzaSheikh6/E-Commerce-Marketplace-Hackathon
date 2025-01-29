@@ -79,7 +79,7 @@ export default function TrendyProductsSection() {
       {/* Right Section: Product Image Slider */}
       <div className="relative flex items-center w-full md:w-2/3 justify-center mt-6 md:mt-0">
         {/* Image Slider */}
-        <div className="relative w-full md:w-[500px] lg:w-[850px] overflow-hidden">
+        <div className="relative w-full md:w-[440px] lg:w-[850px] overflow-hidden">
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentSlide * 35}%)` }}
@@ -94,8 +94,8 @@ export default function TrendyProductsSection() {
                   alt={`Product: ${product.title}`}
                   className="w-full h-full rounded-sm object-cover"
                   loading="lazy"
-                  width={370} // Adjust based on product image width
-                  height={520} // Adjust based on product image height
+                  width={1000} // Adjust based on product image width
+                  height={1000} // Adjust based on product image height
                 />
                 <div
                   className="absolute bottom-4 left-4 bg-white bg-opacity-70 text-black text-sm 
@@ -106,7 +106,7 @@ export default function TrendyProductsSection() {
                 </div>
                 <a href={`/product/${product._id}`}>
                   <div
-                    className="absolute cursor-pointer bottom-4 left-[102px] md:left-40 p-1 md:p-2 bg-[#B88E2F] 
+                    className="absolute cursor-pointer bottom-4 left-[110px] md:left-40 p-1 md:p-2 bg-[#B88E2F] 
                      shadow hover:bg-[#c89b32] transition"
                   >
                     <FaArrowRightLong />

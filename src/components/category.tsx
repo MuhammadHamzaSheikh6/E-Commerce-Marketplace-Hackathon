@@ -39,10 +39,10 @@ const BrowseRange = () => {
     <div className="text-center py-12">
       {/* Heading */}
       <h2 className="md:text-2xl text-xl font-bold mb-2">{data.mainHeading}</h2>
-      <p className="text-gray-600 text-sm md:text-base mb-8">{data.subHeading}</p>
+      <p className="text-gray-600 text-sm mx-8 md:text-base mb-8">{data.subHeading}</p>
 
       {/* Categories */}
-      <div className="grid grid-cols-1 px-5 md:px-0 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 px-8 md:px-10 lg:px-0 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {data.categories.map((category, index) => (
           <div
             key={index}
@@ -57,7 +57,7 @@ const BrowseRange = () => {
                 alt={`Category: ${category.title}`}
                 width={500}
                 height={500}
-                className="w-full h-auto object-cover"
+                className="w-full h-[400px] md:h-auto object-cover"
                 priority={index === 0} // Prioritize the first image for better performance
               />
               <div className="p-4">

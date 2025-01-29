@@ -147,7 +147,7 @@ export default function Products() {
     return <div className="text-center">No products found.</div>;
 
   return (
-    <div className="py-12 px-4 lg:px-16">
+    <div className="py-12 px-8 lg:px-16">
       <Toaster />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
         {data.map((item) => (
@@ -158,8 +158,8 @@ export default function Products() {
             <Image
               src={urlFor(item.productImage).width(1000).height(1000).url()}
               alt={`Image of ${item.title}`}
-              width={400}
-              height={400}
+              width={1000}
+              height={1000}
               loading="lazy"
             />
 

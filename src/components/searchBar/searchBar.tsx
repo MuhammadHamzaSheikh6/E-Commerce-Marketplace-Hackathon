@@ -7,18 +7,15 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ searchQuery, setSearchQuery }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // Renamed to isOpen for clarity
 
   return (
-    <div
-      className="relative flex items-center"
-      onMouseEnter={() => setIsHovered(true)} // On hover over the icon, open the search bar
-      onMouseLeave={() => setIsHovered(false)} // On hover out, close the search bar
-    >
+    <div className="relative flex items-center">
       {/* Search Icon */}
       <CiSearch
         className="cursor-pointer text-[#F9A13D]"
         size={30}
+        onClick={() => setIsOpen(!isOpen)} // Toggle search bar on click
       />
       
       {/* Search Bar */}
@@ -29,8 +26,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchQuery, setSearchQuery }) =>
         placeholder="Search products..."
         className="p-2 text-gray-600 border rounded-lg focus:ring-[#F9A13D] focus:ring-2 absolute right-0 transition-all duration-300"
         style={{
-          width: isHovered ? "200px" : "0", // Controls the width of the search bar on hover
-          opacity: isHovered ? 1 : 0, // Controls the opacity for a smoother effect
+          width: isOpen ? "200px" : "0", // Controls the width of the search bar on click
+          opacity: isOpen ? 1 : 0, // Controls the opacity for a smoother effect
         }}
       />
     </div>

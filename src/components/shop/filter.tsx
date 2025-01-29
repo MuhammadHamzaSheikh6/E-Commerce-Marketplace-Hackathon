@@ -6,7 +6,6 @@ import { BiGridSmall } from "react-icons/bi";
 import { LiaGripLinesVerticalSolid } from "react-icons/lia";
 import SearchBar from "../searchBar/searchBar";
 
-
 interface FilterProps {
   setIsNew: (value: boolean | null) => void;
   discounted: boolean;
@@ -38,9 +37,10 @@ const Filter: React.FC<FilterProps> = ({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row justify-around items-center bg-[#F9F1E7] py-5 gap-4">
+      {/* Main Filter Section */}
+      <div className="flex  flex-col lg:flex-row justify-around items-center bg-[#F9F1E7] py-5 gap-4 px-4 sm:px-6 lg:px-8">
         {/* Left Section */}
-        <div className="flex flex-col sm:flex-row items-center text-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center text-center gap-4 lg:w-auto">
           <ul className="flex items-center text-xl sm:text-2xl gap-4">
             <li
               className="flex items-center gap-2 cursor-pointer"
@@ -68,17 +68,18 @@ const Filter: React.FC<FilterProps> = ({
         </div>
 
         {/* Right Section */}
-        <div className="flex flex-col sm:flex-row text-lg gap-4 w-full lg:w-auto">
-          {/* Use the SearchBar Component */}
+        <div className="flex flex-col sm:flex-row text-lg gap-4  lg:w-auto">
+          {/* SearchBar Component */}
           <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
+          {/* Show Dropdown */}
           <div className="flex items-center gap-2 sm:gap-4">
             <label htmlFor="shop" className="font-medium text-[#1F3A5E]">
               Show
             </label>
             <select
               id="shop"
-              className="p-2 text-gray-600 border rounded-lg focus:ring-[#F9A13D] focus:ring-2"
+              className="p-2 text-gray-600 border rounded-lg focus:ring-[#F9A13D] focus:ring-2 w-full sm:w-auto"
               value={show}
               onChange={(e) => setShow(parseInt(e.target.value))}
             >
@@ -88,13 +89,15 @@ const Filter: React.FC<FilterProps> = ({
               <option value="64">64</option>
             </select>
           </div>
+
+          {/* Sort By Dropdown */}
           <div className="flex items-center gap-2 sm:gap-4">
             <label htmlFor="shortby" className="font-medium text-[#1F3A5E]">
               Sort by
             </label>
             <select
               id="shortby"
-              className="p-2 text-gray-600 border rounded-lg focus:ring-[#F9A13D] focus:ring-2"
+              className="p-2 text-gray-600 border rounded-lg focus:ring-[#F9A13D] focus:ring-2 w-full sm:w-auto"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
@@ -108,13 +111,13 @@ const Filter: React.FC<FilterProps> = ({
 
       {/* Filter Section with Animation */}
       <div
-        className={`transition-all lg:w-[750px] mt-4 ml-6 duration-500 ease-in-out bg-[#F9F1E7] px-4 py-3 shadow-lg rounded-full ${
+        className={`transition-all lg:w-[750px] mt-4 mx-4 lg:mx-auto duration-500 ease-in-out bg-[#F9F1E7] px-4 py-3 shadow-lg rounded-lg ${
           isFilterOpen ? "opacity-100" : "max-h-0 opacity-0"
         } overflow-hidden`}
       >
-        <div className="flex flex-col md:flex-row gap-12 items-center justify-between">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-12 items-center justify-between">
           {/* Is New Filter */}
-          <div className="flex gap-6 items-center">
+          <div className="flex flex-col sm:flex-row gap-6 items-center">
             <div className="relative">
               <select
                 onChange={(e) =>
@@ -146,27 +149,29 @@ const Filter: React.FC<FilterProps> = ({
           </div>
 
           {/* Price Range Filter */}
-          <div className="flex gap-4 items-center">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
             <span className="text-[#1F3A5E] font-semibold">Price Range:</span>
-            <input
-              type="number"
-              value={priceRange[0]}
-              onChange={(e) =>
-                setPriceRange([parseInt(e.target.value), priceRange[1]])
-              }
-              className="bg-[#F5E1A4] text-[#1F3A5E] border-2 border-[#F5E1A4] rounded-full px-4 py-2 w-24 transition duration-300 ease-in-out focus:ring-2 focus:ring-[#F9A13D] hover:border-[#F9A13D]"
-              placeholder="Min"
-            />
-            <span className="text-[#1F3A5E]">-</span>
-            <input
-              type="number"
-              value={priceRange[1]}
-              onChange={(e) =>
-                setPriceRange([priceRange[0], parseInt(e.target.value)])
-              }
-              className="bg-[#F5E1A4] text-[#1F3A5E] border-2 border-[#F5E1A4] rounded-full px-4 py-2 w-24 transition duration-300 ease-in-out focus:ring-2 focus:ring-[#F9A13D] hover:border-[#F9A13D]"
-              placeholder="Max"
-            />
+            <div className="flex gap-2">
+              <input
+                type="number"
+                value={priceRange[0]}
+                onChange={(e) =>
+                  setPriceRange([parseInt(e.target.value), priceRange[1]])
+                }
+                className="bg-[#F5E1A4] text-[#1F3A5E] border-2 border-[#F5E1A4] rounded-full px-4 py-2 w-24 transition duration-300 ease-in-out focus:ring-2 focus:ring-[#F9A13D] hover:border-[#F9A13D]"
+                placeholder="Min"
+              />
+              <span className="text-[#1F3A5E]">-</span>
+              <input
+                type="number"
+                value={priceRange[1]}
+                onChange={(e) =>
+                  setPriceRange([priceRange[0], parseInt(e.target.value)])
+                }
+                className="bg-[#F5E1A4] text-[#1F3A5E] border-2 border-[#F5E1A4] rounded-full px-4 py-2 w-24 transition duration-300 ease-in-out focus:ring-2 focus:ring-[#F9A13D] hover:border-[#F9A13D]"
+                placeholder="Max"
+              />
+            </div>
           </div>
         </div>
       </div>
