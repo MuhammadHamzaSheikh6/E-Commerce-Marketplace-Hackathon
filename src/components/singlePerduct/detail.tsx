@@ -36,9 +36,7 @@ export default function Detail({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cart, setCart] = useLocalStorage<IProduct[]>("cart", []);
-
-
-  const productUrl = typeof window !== "undefined" ? window.location.href : "";
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
 
   // Fetch product data
   useEffect(() => {
@@ -108,6 +106,8 @@ export default function Detail({ id }: { id: string }) {
 
   // Handle share functionality
   const handleShare = (platform: "facebook" | "twitter" | "instagram") => {
+    if (!product) return;
+    const productUrl = window.location.href;
     let url = "";
     switch (platform) {
       case "facebook":
@@ -122,7 +122,7 @@ export default function Detail({ id }: { id: string }) {
     }
     window.open(url, "_blank");
   };
-
+  
   // Handle add to cart
   const handleCart = () => {
     if (!product) return;
@@ -139,6 +139,32 @@ export default function Detail({ id }: { id: string }) {
 
     setCart(updatedCart);
     alert("Product added to cart!");
+  };
+
+  const ImageModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1000,
+        }}
+        onClick={onClose}
+      >
+        <img
+          src={src}
+          alt="Full Screen"
+          style={{ maxWidth: "90%", maxHeight: "90%", borderRadius: "8px" }}
+        />
+      </div>
+    );
   };
 
   // Loading and error states
@@ -194,14 +220,16 @@ export default function Detail({ id }: { id: string }) {
 
         <div className="aspect-w-1 aspect-h-1 rounded-lg overflow-hidden">
           {selectedImage && (
-            <Image
-              src={selectedImage}
-              alt="Product Image"
-              width={1000}
-              height={1000}
-              className="h-[240px] lg:h-[500px] lg:w-[423px] object-cover"
-              loading="lazy"
-            />
+            <div onClick={() => setIsModalOpen(true)}>
+              <Image
+                src={selectedImage}
+                alt="Product Image"
+                width={1000}
+                height={1000}
+                className="h-[240px] lg:h-[500px] lg:w-[423px] object-cover cursor-pointer"
+                loading="lazy"
+              />
+            </div>
           )}
         </div>
       </div>
@@ -328,6 +356,11 @@ export default function Detail({ id }: { id: string }) {
           </div>
         </div>
       </div>
+
+      {/* Modal for Full Screen Image */}
+      {isModalOpen && selectedImage && (
+        <ImageModal src={selectedImage} onClose={() => setIsModalOpen(false)} />
+      )}
     </div>
   );
 }
