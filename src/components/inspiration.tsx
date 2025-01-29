@@ -24,6 +24,7 @@ export default function TrendyProductsSection() {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -34,9 +35,15 @@ export default function TrendyProductsSection() {
             discountPercentage, price, oldPrice, isNew, productImage
           }`
         );
-        setProducts(fetchedProducts);
+
+        if (!fetchedProducts.length) {
+          setError("No trending products found.");
+        } else {
+          setProducts(fetchedProducts);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
+        setError("Failed to load products. Please try again later.");
       } finally {
         setIsLoading(false);
       }
@@ -54,10 +61,14 @@ export default function TrendyProductsSection() {
   };
 
   if (isLoading) return <div className="text-center">Loading products...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
   if (!products.length) return <div className="text-center">No products found.</div>;
 
   return (
-    <section className="relative bg-[#FCF8F3] h-[490px] md:h-[570px] w-full bg-cover bg-center flex flex-col md:flex-row items-center">
+    <section
+      className="relative bg-[#FCF8F3] h-[490px] md:h-[570px] w-full bg-cover bg-center flex flex-col md:flex-row items-center"
+      aria-label="Trendy Products Section"
+    >
       {/* Left Section */}
       <div className="md:pl-16 pl-4 py-5 w-full md:py-20 text-black space-y-4 md:space-y-6">
         <h1 className="md:text-4xl text-2xl font-bold text-gray-800 leading-tight">
@@ -66,7 +77,7 @@ export default function TrendyProductsSection() {
         <p className="md:text-lg lg:pr-16 text-gray-600">
           Our designers have created a wide variety of beautiful room prototypes to inspire you.
         </p>
-        <a href="/explore">
+        <a href="/explore" aria-label="Explore More">
           <button
             className="bg-[#B88E2F] text-white mt-5 px-4 py-2 md:px-8 md:py-3 text-lg font-medium 
             hover:bg-[#c89b32] transition duration-300"
@@ -83,19 +94,22 @@ export default function TrendyProductsSection() {
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentSlide * 35}%)` }}
+            role="list"
           >
             {products.map((product, index) => (
               <div
                 key={product._id}
                 className="relative w-44 h-52 md:w-[300px] md:h-[460px] lg:w-[370px] lg:h-[520px] mx-2 flex-shrink-0"
+                role="listitem"
+                aria-label={`Product: ${product.title}`}
               >
                 <Image
                   src={urlFor(product.productImage).width(400).height(400).url()}
                   alt={`Product: ${product.title}`}
                   className="w-full h-full rounded-sm object-cover"
                   loading="lazy"
-                  width={1000} // Adjust based on product image width
-                  height={1000} // Adjust based on product image height
+                  width={400} // Optimized for performance
+                  height={400} // Optimized for performance
                 />
                 <div
                   className="absolute bottom-4 left-4 bg-white bg-opacity-70 text-black text-sm 
@@ -104,12 +118,12 @@ export default function TrendyProductsSection() {
                   {String(index + 1).padStart(2, "0")} - {product.category} <br />
                   <span className="font-bold text-sm md:text-lg">{product.tag}</span>
                 </div>
-                <a href={`/product/${product._id}`}>
+                <a href={`/product/${product._id}`} aria-label={`View ${product.title}`}>
                   <div
                     className="absolute cursor-pointer bottom-4 left-[110px] md:left-40 p-1 md:p-2 bg-[#B88E2F] 
                      shadow hover:bg-[#c89b32] transition"
                   >
-                    <FaArrowRightLong />
+                    <FaArrowRightLong aria-hidden="true" />
                   </div>
                 </a>
               </div>

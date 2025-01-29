@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 import Image from 'next/image';
@@ -11,26 +11,45 @@ interface ICategory {
 }
 
 const fetchBrowseCategories = async () => {
-  return await client.fetch(
-    `*[_type == "browseCategories"][0]{mainHeading, subHeading, categories}`
-  );
+  try {
+    return await client.fetch(
+      `*[_type == "browseCategories"][0]{mainHeading, subHeading, categories}`
+    );
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return null;
+  }
 };
 
 const BrowseRange = () => {
   const [data, setData] = useState<{ mainHeading: string; subHeading: string; categories: ICategory[] } | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
       const fetchedData = await fetchBrowseCategories();
       setData(fetchedData);
+      setLoading(false);
     };
     getData();
   }, []);
 
-  if (!data) {
+  const handleCategoryClick = useCallback((title: string) => {
+    window.location.href = `/category/${encodeURIComponent(title)}`;
+  }, []);
+
+  if (loading) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-600">Failed to load categories. Please try again later.</p>
       </div>
     );
   }
@@ -46,24 +65,22 @@ const BrowseRange = () => {
         {data.categories.map((category, index) => (
           <div
             key={index}
-            className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300"
+            className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+            onClick={() => handleCategoryClick(category.title)}
+            role="button"
+            aria-label={`Explore category: ${category.title}`}
           >
-            <a
-              href={`/category/${encodeURIComponent(category.title)}`}
-              aria-label={`Explore category: ${category.title}`}
-            >
-              <Image
-                src={urlFor(category.image).url()}
-                alt={`Category: ${category.title}`}
-                width={500}
-                height={500}
-                className="w-full h-[400px] md:h-auto object-cover"
-                priority={index === 0} // Prioritize the first image for better performance
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-medium">{category.title}</h3>
-              </div>
-            </a>
+            <Image
+              src={urlFor(category.image).url()}
+              alt={`Category: ${category.title}`}
+              width={500}
+              height={500}
+              className="w-full h-[400px] md:h-auto object-cover"
+              priority={index === 0} // Prioritize the first image for better performance
+            />
+            <div className="p-4">
+              <h3 className="text-lg font-medium">{category.title}</h3>
+            </div>
           </div>
         ))}
       </div>

@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { CiHeart, CiSearch } from "react-icons/ci";
@@ -10,37 +11,67 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { FaBars } from "react-icons/fa6";
+import { FaBars, FaRegHeart } from "react-icons/fa6";
 import Cart from "./adToCart/cart";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { FaSearch } from "react-icons/fa";
+import { IoMdSearch } from "react-icons/io";
 
 export default function Header() {
+  // Performance Optimization: Preload critical resources
+  const preloadResources = () => {
+    return (
+      <>
+        <link rel="preload" href="/logo.png" as="image" />
+        <link
+          rel="preload"
+          href="/wishlist"
+          as="fetch"
+          crossOrigin="anonymous"
+        />
+      </>
+    );
+  };
+
+  // Error Handling: Fallback for missing logo
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    const target = e.target as HTMLImageElement;
+    target.src = "/fallback-logo.png"; // Provide a fallback image
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white shadow">
+      {preloadResources()} {/* Preload critical resources */}
       <div className="flex justify-between items-center mx-2 md:mx-10 py-4">
         {/* Logo and Brand Name */}
         <div className="flex items-center gap-1">
-          <Link href="/" aria-label="Furniro Home">
+          <Link href="/" aria-label="Furniro Home" passHref>
             <Image
               src="/logo.png"
               alt="Furniro - Premium Furniture Logo"
               width={32}
               height={20}
               className="w-8 h-5"
+              onError={handleImageError} // Error handling for image
+              priority // Prioritize loading the logo
             />
           </Link>
-          <Link href="/" aria-label="Furniro Home">
+          <Link href="/" aria-label="Furniro Home" passHref>
             <h1 className="text-2xl font-bold">Furniro</h1>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex gap-12">
+        <nav className="hidden lg:flex gap-12" aria-label="Main Navigation">
           {["Home", "Shop", "Blog", "Contact"].map((item) => (
             <Link
               key={item}
               href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
               className="relative text-black after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 hover:after:w-full"
-              aria-label={item}
+              aria-label={`Navigate to ${item}`}
+              passHref
             >
               {item}
             </Link>
@@ -48,28 +79,39 @@ export default function Header() {
         </nav>
 
         {/* Desktop Icons */}
-        <div className="hidden lg:flex items-center gap-4">
+        <div
+          className="hidden lg:flex items-center gap-4"
+          aria-label="User Actions"
+        >
           <button
-            className="text-gray-600 hover:text-gray-800"
-            aria-label="Account"
-          >
-            <RiAccountPinCircleFill size={24} />
-          </button>
-          <button
-            className="text-gray-600 hover:text-gray-800"
+            className="text-gray-600 font-semibold hover:text-gray-800"
             aria-label="Search"
+            onClick={() => console.log("Search clicked")} // Placeholder for search action
           >
-            <CiSearch size={24} />
+            <IoMdSearch size={24} />
           </button>
-          <button
-            className="text-gray-600 hover:text-gray-800"
-            aria-label="Wishlist"
-          >
-            <a href="/wishlist">
-              <CiHeart size={24} />
-            </a>
-          </button>
+          <Link href="/wishlist" passHref>
+            <button
+              className="text-gray-600 mt-2 hover:text-gray-800"
+              aria-label="Wishlist"
+            >
+              <FaRegHeart size={22} />
+            </button>
+          </Link>
           <Cart />
+          <SignedOut>
+            <SignInButton>
+              <button
+                className="text-gray-600 hover:text-gray-800"
+                aria-label="Sign In"
+              >
+                <RiAccountPinCircleFill size={24} />
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
 
         {/* Mobile Menu */}
@@ -81,7 +123,7 @@ export default function Header() {
             <SheetHeader>
               <SheetTitle>
                 <div className="flex items-center gap-1">
-                  <Link href="/" aria-label="Furniro Home">
+                  <Link href="/" aria-label="Furniro Home" passHref>
                     <Image
                       src="/logo.png"
                       alt="Furniro Logo"
@@ -89,48 +131,61 @@ export default function Header() {
                       height={20}
                       className="w-8 h-5"
                       loading="lazy"
+                      onError={handleImageError} // Error handling for image
                     />
                   </Link>
-                  <Link href="/" aria-label="Furniro Home">
+                  <Link href="/" aria-label="Furniro Home" passHref>
                     <h1 className="text-2xl font-bold">Furniro</h1>
                   </Link>
                 </div>
               </SheetTitle>
               <SheetDescription>
-                <div className="grid gap-5 mt-1">
+                <div className="grid gap-5 mt-1" aria-label="Mobile Navigation">
                   {["Home", "Shop", "Blog", "Contact"].map((item) => (
                     <Link
                       key={item}
                       href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
                       className="relative text-black after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 hover:after:w-full"
-                      aria-label={item}
+                      aria-label={`Navigate to ${item}`}
+                      passHref
                     >
                       {item}
                     </Link>
                   ))}
                 </div>
 
-                <div className="flex justify-center items-center gap-4 mt-5">
-                  <button
-                    className="text-gray-600 hover:text-gray-800"
-                    aria-label="Account"
-                  >
-                    <RiAccountPinCircleFill size={24} />
-                  </button>
+                <div
+                  className="flex justify-center items-center gap-4 mt-5"
+                  aria-label="Mobile User Actions"
+                >
+                  <SignedOut>
+                    <SignInButton>
+                      <button
+                        className="text-gray-600 hover:text-gray-800"
+                        aria-label="Sign In"
+                      >
+                        <RiAccountPinCircleFill size={24} />
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton/>
+                  </SignedIn>
                   <button
                     className="text-gray-600 hover:text-gray-800"
                     aria-label="Search"
+                    onClick={() => console.log("Search clicked")} // Placeholder for search action
                   >
                     <CiSearch size={24} />
                   </button>
-                  <button
-                    className="text-gray-600 hover:text-gray-800"
-                    aria-label="Wishlist"
-                  >
-                    <a href="/wishlist">
+                  <Link href="/wishlist" passHref>
+                    <button
+                      className="mt-2 text-gray-600 hover:text-gray-800"
+                      aria-label="Wishlist"
+                    >
                       <CiHeart size={24} />
-                    </a>
-                  </button>
+                    </button>
+                  </Link>
                   <Cart />
                 </div>
               </SheetDescription>

@@ -24,20 +24,12 @@ interface IProduct {
 export default function Products() {
   const [data, setData] = useState<IProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Handle wishlist functionality
   const handleWishlist = (product: IProduct) => {
-    if (!product) return;
-
-    // Retrieve the wishlist from localStorage
-    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-
-    // Check if the product is already in the wishlist
-    const isAlreadyInWishlist = wishlist.some(
-      (item: IProduct) => item._id === product._id
-    );
-
-    if (isAlreadyInWishlist) {
-      toast.success("Product is already in your wishlist!", {
+    if (!product) {
+      toast.error("Invalid product data.", {
         position: "top-right",
         duration: 3000,
         style: {
@@ -48,83 +40,100 @@ export default function Products() {
       return;
     }
 
-    // Add the selected product to the wishlist
-    const updatedWishlist = [...wishlist, product];
+    try {
+      // Retrieve the wishlist from localStorage
+      const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
 
-    // Save the updated wishlist back to localStorage
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+      // Check if the product is already in the wishlist
+      const isAlreadyInWishlist = wishlist.some(
+        (item: IProduct) => item._id === product._id
+      );
 
-    toast.success("Product added to wishlist!", {
-      position: "top-right",
-      duration: 3000,
-      style: {
-        background: "#B88E2F",
-        color: "white",
-      },
-    });
-  };
-
-  // Function to handle sharing
-  const handleShare = (productId: string) => {
-    const productLink = `${window.location.origin}/product/${productId}`;
-
-    // Check if the Web Share API is supported
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "Check out this product!",
-          text: "I found this amazing product and thought you might like it.",
-          url: productLink,
-        })
-        .then(() => {
-          toast.success("Product shared successfully!", {
-            position: "top-right",
-            duration: 3000,
-            style: {
-              background: "#4ade80",
-              color: "white",
-            },
-          });
-        })
-        .catch((error) => {
-          console.error("Error sharing:", error);
-          toast.error("Failed to share product.", {
-            position: "top-right",
-            duration: 3000,
-            style: {
-              background: "#f87171",
-              color: "white",
-            },
-          });
+      if (isAlreadyInWishlist) {
+        toast.success("Product is already in your wishlist!", {
+          position: "top-right",
+          duration: 3000,
+          style: {
+            background: "#f87171",
+            color: "white",
+          },
         });
-    } else {
-      // Fallback for browsers that don't support the Web Share API
-      navigator.clipboard
-        .writeText(productLink)
-        .then(() => {
-          toast.success("Link copied to clipboard!", {
-            position: "top-right",
-            duration: 3000,
-            style: {
-              background: "#4ade80",
-              color: "white",
-            },
-          });
-        })
-        .catch((error) => {
-          console.error("Error copying to clipboard:", error);
-          toast.error("Failed to copy link.", {
-            position: "top-right",
-            duration: 3000,
-            style: {
-              background: "#f87171",
-              color: "white",
-            },
-          });
-        });
+        return;
+      }
+
+      // Add the selected product to the wishlist
+      const updatedWishlist = [...wishlist, product];
+
+      // Save the updated wishlist back to localStorage
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+      toast.success("Product added to wishlist!", {
+        position: "top-right",
+        duration: 3000,
+        style: {
+          background: "#B88E2F",
+          color: "white",
+        },
+      });
+    } catch (err) {
+      console.error("Error handling wishlist:", err);
+      toast.error("Failed to add product to wishlist.", {
+        position: "top-right",
+        duration: 3000,
+        style: {
+          background: "#f87171",
+          color: "white",
+        },
+      });
     }
   };
 
+  // Handle sharing functionality
+  const handleShare = async (productId: string) => {
+    const productLink = `${window.location.origin}/product/${productId}`;
+
+    try {
+      // Check if the Web Share API is supported
+      if (navigator.share) {
+        await navigator.share({
+          title: "Check out this product!",
+          text: "I found this amazing product and thought you might like it.",
+          url: productLink,
+        });
+        toast.success("Product shared successfully!", {
+          position: "top-right",
+          duration: 3000,
+          style: {
+            background: "#4ade80",
+            color: "white",
+          },
+        });
+      } else {
+        // Fallback for browsers that don't support the Web Share API
+        await navigator.clipboard.writeText(productLink);
+        toast.success("Link copied to clipboard!", {
+          position: "top-right",
+          duration: 3000,
+          style: {
+            background: "#4ade80",
+            color: "white",
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Error sharing product:", err);
+      toast.error("Failed to share product.", {
+        position: "top-right",
+        duration: 3000,
+        style: {
+          background: "#f87171",
+          color: "white",
+        },
+      });
+    }
+  };
+
+  // Fetch products from Sanity
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -132,8 +141,9 @@ export default function Products() {
           '*[_type == "product"][0...8]{_id, title, shortDescription, dicountPercentage, price, oldPrice, isNew, productImage}'
         );
         setData(products);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+        setError("Failed to load products. Please try again later.");
       } finally {
         setIsLoading(false);
       }
@@ -142,18 +152,44 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  if (isLoading) return <div className="text-center">Loading products...</div>;
-  if (!data.length)
-    return <div className="text-center">No products found.</div>;
+  // Loading and error states
+  if (isLoading) {
+    return (
+      <div className="text-center py-12">
+        <p>Loading products...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  if (!data.length) {
+    return (
+      <div className="text-center py-12">
+        <p>No products found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="py-12 px-8 lg:px-16">
       <Toaster />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto"
+        role="list"
+      >
         {data.map((item) => (
           <div
             key={item._id}
             className="relative bg-gray-100 rounded overflow-hidden group"
+            role="listitem"
+            aria-label={`Product: ${item.title}`}
           >
             <Image
               src={urlFor(item.productImage).width(1000).height(1000).url()}
@@ -161,6 +197,7 @@ export default function Products() {
               width={1000}
               height={1000}
               loading="lazy"
+              priority={false} // Optimize performance by lazy loading images
             />
 
             {item.dicountPercentage && (
@@ -171,6 +208,7 @@ export default function Products() {
                   height: "40px",
                   borderRadius: "50%",
                 }}
+                aria-label={`Discount: ${item.dicountPercentage}%`}
               >
                 %{item.dicountPercentage}
               </span>
@@ -184,6 +222,7 @@ export default function Products() {
                   height: "40px",
                   borderRadius: "50%",
                 }}
+                aria-label="New Product"
               >
                 NEW
               </span>
@@ -206,7 +245,10 @@ export default function Products() {
 
             <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <Link href={`/product/${item._id}`} legacyBehavior>
-                <a className="bg-white text-yellow-600 px-6 py-2 mb-2 font-medium rounded shadow">
+                <a
+                  className="bg-white text-yellow-600 px-6 py-2 mb-2 font-medium rounded shadow"
+                  aria-label={`View details of ${item.title}`}
+                >
                   View Details
                 </a>
               </Link>
@@ -214,19 +256,24 @@ export default function Products() {
                 <button
                   onClick={() => handleShare(item._id)}
                   className="flex items-center gap-1 hover:text-red-500 text-white"
+                  aria-label={`Share ${item.title}`}
                 >
                   <IoMdShare />
                   <span>Share</span>
                 </button>
-                <a href={`/comparison/${item._id}`}>
-                  <button className="flex items-center gap-1 hover:text-red-500 text-white">
+                <Link href={`/comparison/${item._id}`} legacyBehavior>
+                  <a
+                    className="flex items-center gap-1 hover:text-red-500 text-white"
+                    aria-label={`Compare ${item.title}`}
+                  >
                     <MdCompareArrows />
                     <span>Compare</span>
-                  </button>
-                </a>
+                  </a>
+                </Link>
                 <button
                   onClick={() => handleWishlist(item)}
                   className="flex items-center gap-1 text-white hover:text-red-500"
+                  aria-label={`Add ${item.title} to wishlist`}
                 >
                   <FaRegHeart />
                   <span>Like</span>
@@ -239,7 +286,10 @@ export default function Products() {
 
       <div className="mt-8 text-center">
         <Link href="/shop" legacyBehavior>
-          <a className="px-10 py-2 text-yellow-600 border-2 border-yellow-600 hover:bg-yellow-500 hover:text-white font-medium rounded transition">
+          <a
+            className="px-10 py-2 text-yellow-600 border-2 border-yellow-600 hover:bg-yellow-500 hover:text-white font-medium rounded transition"
+            aria-label="Show more products"
+          >
             Show More
           </a>
         </Link>
