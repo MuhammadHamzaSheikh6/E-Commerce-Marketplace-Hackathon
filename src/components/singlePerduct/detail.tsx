@@ -158,9 +158,11 @@ export default function Detail({ id }: { id: string }) {
         }}
         onClick={onClose}
       >
-        <img
+        <Image
           src={src}
           alt="Full Screen"
+          height={1000}
+          width={1000}
           style={{ maxWidth: "90%", maxHeight: "90%", borderRadius: "8px" }}
         />
       </div>

@@ -14,7 +14,6 @@ import {
 import { FaBars, FaRegHeart } from "react-icons/fa6";
 import Cart from "./adToCart/cart";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { FaSearch } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
 
 export default function Header() {
