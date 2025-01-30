@@ -6,6 +6,7 @@ import Footer from "@/components/footer";
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ClerkProvider } from "@clerk/nextjs";
+import SalesBanner from "@/components/salesBanner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,6 +35,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <SalesBanner/>
         <Header/>
         {children}
         <SpeedInsights />

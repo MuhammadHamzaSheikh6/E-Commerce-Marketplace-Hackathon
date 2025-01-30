@@ -1,9 +1,13 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { MdKeyboardArrowRight } from "react-icons/md";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
+import { MdKeyboardArrowRight } from 'react-icons/md';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
 
 interface CartItem {
   title: string;
@@ -11,42 +15,134 @@ interface CartItem {
   quantity: number;
 }
 
+interface FormData {
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  country: string;
+  streetAddress: string;
+  city: string;
+  province: string;
+  zipCode: string;
+  phone: string;
+  emailAddress: string;
+  additionalInformation: string;
+  paymentMethod: string;
+}
+
+const CheckoutForm = () => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: 'http://localhost:3000/success',
+        },
+      });
+
+      if (error) {
+        setErrorMessage(error.message || 'An error occurred.');
+      }
+    } catch (error: any) {
+      setErrorMessage(error.message || 'An error occurred.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <PaymentElement />
+      <button
+        type="submit"
+        disabled={!stripe || isLoading}
+        className="w-full bg-black text-white py-2 rounded-md mt-4 hover:bg-gray-800 disabled:bg-gray-400"
+      >
+        {isLoading ? 'Processing...' : 'Pay Now'}
+      </button>
+      {errorMessage && <div className="text-red-500 mt-4">{errorMessage}</div>}
+    </form>
+  );
+};
+
 export default function Checkout() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    companyName: "",
-    country: "Sri Lanka",
-    streetAddress: "",
-    city: "",
-    province: "Western Province",
-    zipCode: "",
-    phone: "",
-    emailAddress: "",
-    additionalInformation: "",
-    paymentMethod: "bank",
+  const [clientSecret, setClientSecret] = useState<string>('');
+  const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
+    companyName: '',
+    country: 'Sri Lanka',
+    streetAddress: '',
+    city: '',
+    province: 'Western Province',
+    zipCode: '',
+    phone: '',
+    emailAddress: '',
+    additionalInformation: '',
+    paymentMethod: 'bank',
   });
 
   // Fetch cart items from localStorage
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
     if (Array.isArray(storedCart)) {
       setCartItems(storedCart as CartItem[]);
     }
   }, []);
 
+  // Create PaymentIntent on component mount
+  useEffect(() => {
+    const createPaymentIntent = async () => {
+      try {
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ amount: calculateSubtotal() }),
+        });
+        const { clientSecret } = await response.json();
+        setClientSecret(clientSecret);
+      } catch (error) {
+        console.error('Error creating PaymentIntent:', error);
+      }
+    };
+
+    if (cartItems.length > 0) {
+      createPaymentIntent();
+    }
+  }, [cartItems]);
+
+  const calculateSubtotal = () =>
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const calculateSubtotal = () =>
-    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const options = {
+    clientSecret,
+    appearance: {
+      theme: 'stripe' as 'stripe',
+    },
+  };
 
   return (
     <div>
@@ -83,9 +179,7 @@ export default function Checkout() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 px-6 lg:px-0">
           {/* Billing Details Section */}
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800">
-              Billing details
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-800">Billing details</h2>
             <form className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div>
@@ -237,8 +331,7 @@ export default function Checkout() {
                       {item.title}
                     </h4>
                     <p className="text-sm text-gray-500">
-                      {item.quantity} x Rs.{" "}
-                      {Number(item.price).toLocaleString()}
+                      {item.quantity} x Rs. {Number(item.price).toLocaleString()}
                     </p>
                   </div>
                   <p className="text-base font-bold text-gray-800">
@@ -252,9 +345,11 @@ export default function Checkout() {
               <span>Rs. {calculateSubtotal().toLocaleString()}</span>
             </div>
             <div className="mt-6">
-              <button className="w-full bg-black text-white py-2 rounded-md">
-                Place Order
-              </button>
+              {clientSecret && (
+                <Elements stripe={stripePromise} options={options}>
+                  <CheckoutForm />
+                </Elements>
+              )}
             </div>
           </div>
         </div>
