@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-10-16' as any, // Use a valid Stripe API version
+  apiVersion: '2025-01-27.acacia', // Use a valid Stripe API version
 });
 
 export async function POST(req: NextRequest) {
@@ -20,8 +20,15 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ clientSecret: paymentIntent.client_secret }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Stripe Error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+    // Handle the error in a type-safe way
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Fallback for unknown errors
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }

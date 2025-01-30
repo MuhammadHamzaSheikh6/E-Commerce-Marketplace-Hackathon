@@ -56,8 +56,12 @@ const CheckoutForm = () => {
       if (error) {
         setErrorMessage(error.message || 'An error occurred.');
       }
-    } catch (error: any) {
-      setErrorMessage(error.message || 'An error occurred.');
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message || 'An error occurred.');
+      } else {
+        setErrorMessage('An unexpected error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -140,7 +144,7 @@ export default function Checkout() {
   const options = {
     clientSecret,
     appearance: {
-      theme: 'stripe' as 'stripe',
+      theme: 'stripe' as const,
     },
   };
 
