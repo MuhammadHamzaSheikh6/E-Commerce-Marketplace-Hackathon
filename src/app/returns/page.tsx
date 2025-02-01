@@ -86,7 +86,7 @@ export default function ReturnPolicyPage() {
           <h2 className="text-3xl md:text-4xl font-bold">Our Return Process</h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
             At Furniro, we want you to be completely satisfied with your
-            purchase. If you're not happy with your order, follow these simple
+            purchase. If you&apos;re not happy with your order, follow these simple
             steps to return it.
           </p>
         </div>
