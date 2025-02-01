@@ -7,6 +7,7 @@ import { IoMdShare } from "react-icons/io";
 import { MdCompareArrows } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa6";
 import toast, { Toaster } from "react-hot-toast";
+import { useWishlist } from "@/app/context/WishlistContext";
 
 interface ProductGridProps {
   products: IProduct[];
@@ -57,45 +58,45 @@ const handleShare = async (productId: string) => {
 };
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
-  const handleWishlist = (product: IProduct) => {
-    if (!product) return;
+    // Use the useWishlist hook to access wishlist functions
+    const { addToWishlist } = useWishlist();
 
-    // Retrieve the wishlist from localStorage
-    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-
-    // Check if the product is already in the wishlist
-    const isAlreadyInWishlist = wishlist.some(
-      (item: IProduct) => item._id === product._id
-    );
-
-    if (isAlreadyInWishlist) {
-      toast.success("Product is already in your wishlist!", {
-        position: "top-right",
-        duration: 3000,
-        style: {
-          background: "#f87171",
-          color: "white",
-        },
-      });
-      return;
-    }
-
-    // Add the selected product to the wishlist
-    const updatedWishlist = [...wishlist, product];
-
-    // Save the updated wishlist back to localStorage
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-
-    toast.success("Product added to wishlist!", {
-      position: "top-right",
-      duration: 3000,
-      style: {
-        background: "#B88E2F",
-        color: "white",
-      },
-    });
-  };
-
+    // Handle wishlist functionality
+    const handleWishlist = (product: IProduct) => {
+      if (!product) {
+        toast.error("Invalid product data.", {
+          position: "top-right",
+          duration: 3000,
+          style: {
+            background: "#f87171",
+            color: "white",
+          },
+        });
+        return;
+      }
+  
+      try {
+        addToWishlist(product); // Use the addToWishlist function from context
+        toast.success("Product added to wishlist!", {
+          position: "top-right",
+          duration: 3000,
+          style: {
+            background: "#B88E2F",
+            color: "white",
+          },
+        });
+      } catch (err) {
+        console.error("Error handling wishlist:", err);
+        toast.error("Failed to add product to wishlist.", {
+          position: "top-right",
+          duration: 3000,
+          style: {
+            background: "#f87171",
+            color: "white",
+          },
+        });
+      }
+    };
   return (
     <div className="grid px-4 lg:px-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <Toaster />
