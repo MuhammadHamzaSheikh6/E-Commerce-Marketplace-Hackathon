@@ -11,11 +11,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { FaBars, FaRegHeart } from "react-icons/fa6";
+import { FaBars } from "react-icons/fa6";
 import Cart from "./adToCart/cart";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { IoMdSearch } from "react-icons/io";
 import { usePathname } from "next/navigation"; // Import usePathname
+import WishlistIcon from "./wishlist/WishlistIcon";
 
 export default function Header() {
   const pathname = usePathname(); // Get the current pathname
@@ -42,6 +43,7 @@ export default function Header() {
     const target = e.target as HTMLImageElement;
     target.src = "/fallback-logo.png"; // Provide a fallback image
   };
+
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow">
@@ -99,14 +101,7 @@ export default function Header() {
           >
             <IoMdSearch size={24} />
           </button>
-          <Link href="/wishlist" passHref>
-            <button
-              className="text-gray-600 mt-2 hover:text-gray-800"
-              aria-label="Wishlist"
-            >
-              <FaRegHeart size={22} />
-            </button>
-          </Link>
+          <WishlistIcon/>
           <Cart />
           <SignedOut>
             <SignInButton>
@@ -151,7 +146,8 @@ export default function Header() {
               <SheetDescription>
                 <div className="grid gap-5 mt-1" aria-label="Mobile Navigation">
                   {["Home", "Shop", "Blog", "Contact"].map((item) => {
-                    const href = item === "Home" ? "/" : `/${item.toLowerCase()}`;
+                    const href =
+                      item === "Home" ? "/" : `/${item.toLowerCase()}`;
                     const isActive = pathname === href; // Check if the current route matches the link
 
                     return (

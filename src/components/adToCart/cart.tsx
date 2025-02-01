@@ -67,7 +67,7 @@ export default function AddToCart() {
           <button className="relative mt-2">
             <IoCartOutline size={24} />
             {cartItems.length > 0 && (
-              <span className="absolute bottom-3 left-3 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute bottom-3 left-4 opacity-90 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
                 {cartItems.reduce((total, item) => total + item.quantity, 0)}
               </span>
             )}

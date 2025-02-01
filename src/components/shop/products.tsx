@@ -12,6 +12,50 @@ interface ProductGridProps {
   products: IProduct[];
 }
 
+const handleShare = async (productId: string) => {
+  const productLink = `${window.location.origin}/product/${productId}`;
+
+  try {
+    // Check if the Web Share API is supported
+    if (navigator.share) {
+      await navigator.share({
+        title: "Check out this product!",
+        text: "I found this amazing product and thought you might like it.",
+        url: productLink,
+      });
+      toast.success("Product shared successfully!", {
+        position: "top-right",
+        duration: 3000,
+        style: {
+          background: "#4ade80",
+          color: "white",
+        },
+      });
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      await navigator.clipboard.writeText(productLink);
+      toast.success("Link copied to clipboard!", {
+        position: "top-right",
+        duration: 3000,
+        style: {
+          background: "#4ade80",
+          color: "white",
+        },
+      });
+    }
+  } catch (err) {
+    console.error("Error sharing product:", err);
+    toast.error("Failed to share product.", {
+      position: "top-right",
+      duration: 3000,
+      style: {
+        background: "#f87171",
+        color: "white",
+      },
+    });
+  }
+};
+
 const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   const handleWishlist = (product: IProduct) => {
     if (!product) return;
@@ -112,25 +156,29 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
                 View Details
               </a>
             </Link>
-              <div className="flex space-x-4">
+            <div className="flex space-x-4">
+              <button
+                onClick={() => handleShare(item._id)}
+                className="flex items-center gap-1 hover:text-red-500 text-white"
+                aria-label={`Share ${item.title}`}
+              >
+                <IoMdShare />
+                <span>Share</span>
+              </button>
+              <a href={`/comparison/${item._id}`}>
                 <button className="flex items-center gap-1 hover:text-red-500 text-white">
-                  <IoMdShare />
-                  <span>Share</span>
+                  <MdCompareArrows />
+                  <span>Compare</span>
                 </button>
-                <a href={`/comparison/${item._id}`}>
-                  <button className="flex items-center gap-1 hover:text-red-500 text-white">
-                    <MdCompareArrows />
-                    <span>Compare</span>
-                  </button>
-                </a>
-                <button
-                  onClick={() => handleWishlist(item)}
-                  className="flex items-center gap-1 text-white hover:text-red-500"
-                >
-                  <FaRegHeart />
-                  <span>Like</span>
-                </button>
-              </div>
+              </a>
+              <button
+                onClick={() => handleWishlist(item)}
+                className="flex items-center gap-1 text-white hover:text-red-500"
+              >
+                <FaRegHeart />
+                <span>Like</span>
+              </button>
+            </div>
           </div>
         </div>
       ))}
