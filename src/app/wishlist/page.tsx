@@ -25,8 +25,8 @@ const WishlistPage = () => {
           <Image
             src="/shop/banner11.png"
             alt="Shop Banner"
-            layout="fill"
-            objectFit="cover"
+            fill
+            style={{ objectFit: "cover" }}
             className=""
             loading="lazy"
             aria-label="Shop Banner"
@@ -36,8 +36,8 @@ const WishlistPage = () => {
               <Image
                 src="/logo.png"
                 alt="Furniro Logo"
-                width="32"
-                height="20"
+                width={32}
+                height={20}
                 className="w-12 h-8"
                 loading="lazy"
               />

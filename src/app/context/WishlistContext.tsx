@@ -4,10 +4,12 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface Product {
   _id: string;
-  // Add other product properties here
   name: string;
+  title: string; // Added
   price: number;
-  // ... other fields
+  productImage: string; // Added (assuming it's a Sanity image type)
+  shortDescription: string; // Added
+  // Add other product properties here
 }
 
 interface WishlistContextType {
