@@ -10,6 +10,7 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Head from "next/head";
 import toast, { Toaster } from "react-hot-toast";
+import { useWishlist } from "@/app/context/WishlistContext";
 
 interface IProduct {
   _id: string;
@@ -26,19 +27,12 @@ export default function BedroomPage() {
   const [data, setData] = useState<IProduct[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const handleWishlist = (product: IProduct) => {
-    if (!product) return;
-
-    // Retrieve the wishlist from localStorage
-    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-
-    // Check if the product is already in the wishlist
-    const isAlreadyInWishlist = wishlist.some(
-      (item: IProduct) => item._id === product._id
-    );
-
-    if (isAlreadyInWishlist) {
-      toast.success("Product is already in your wishlist!", {
+    const { addToWishlist } = useWishlist();
+  
+   // Handle wishlist functionality
+   const handleWishlist = (product: IProduct) => {
+    if (!product) {
+      toast.error("Invalid product data.", {
         position: "top-right",
         duration: 3000,
         style: {
@@ -49,20 +43,27 @@ export default function BedroomPage() {
       return;
     }
 
-    // Add the selected product to the wishlist
-    const updatedWishlist = [...wishlist, product];
-
-    // Save the updated wishlist back to localStorage
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-
-    toast.success("Product added to wishlist!", {
-      position: "top-right",
-      duration: 3000,
-      style: {
-        background: "#B88E2F",
-        color: "white",
-      },
-    });
+    try {
+      addToWishlist(product); // Use the addToWishlist function from context
+      toast.success("Product added to wishlist!", {
+        position: "top-right",
+        duration: 3000,
+        style: {
+          background: "#B88E2F",
+          color: "white",
+        },
+      });
+    } catch (err) {
+      console.error("Error handling wishlist:", err);
+      toast.error("Failed to add product to wishlist.", {
+        position: "top-right",
+        duration: 3000,
+        style: {
+          background: "#f87171",
+          color: "white",
+        },
+      });
+    }
   };
 
   // Function to handle sharing
@@ -261,7 +262,10 @@ export default function BedroomPage() {
 
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <Link href={`/product/${item._id}`} legacyBehavior>
-                    <a className="bg-white text-yellow-600 px-6 py-2 mb-2 font-medium rounded shadow">
+                    <a
+                      className="bg-white text-yellow-600 px-6 py-2 mb-2 font-medium rounded shadow"
+                      aria-label={`View details of ${item.title}`}
+                    >
                       View Details
                     </a>
                   </Link>
@@ -269,19 +273,24 @@ export default function BedroomPage() {
                     <button
                       onClick={() => handleShare(item._id)}
                       className="flex items-center gap-1 hover:text-red-500 text-white"
+                      aria-label={`Share ${item.title}`}
                     >
                       <IoMdShare />
                       <span>Share</span>
                     </button>
-                    <a href={`/comparison/${item._id}`}>
-                      <button className="flex items-center gap-1 hover:text-red-500 text-white">
+                    <Link href={`/comparison/${item._id}`} legacyBehavior>
+                      <a
+                        className="flex items-center gap-1 hover:text-red-500 text-white"
+                        aria-label={`Compare ${item.title}`}
+                      >
                         <MdCompareArrows />
                         <span>Compare</span>
-                      </button>
-                    </a>
+                      </a>
+                    </Link>
                     <button
                       onClick={() => handleWishlist(item)}
                       className="flex items-center gap-1 text-white hover:text-red-500"
+                      aria-label={`Add ${item.title} to wishlist`}
                     >
                       <FaRegHeart />
                       <span>Like</span>

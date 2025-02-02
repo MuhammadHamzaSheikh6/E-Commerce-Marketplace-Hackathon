@@ -21,11 +21,11 @@ export default function MyOrders() {
       : orders.filter((order) => order.status === activeTab);
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-2 md:p-6">
       <h1 className="text-3xl font-bold mb-8 text-gray-800">My Orders</h1>
 
       {/* Tabs */}
-      <div className="flex gap-6 mb-8 border-b border-gray-200">
+      <div className="flex md:gap-6 mb-8 border-b border-gray-200">
         {["All", "To Pay", "To Ship", "To Receive", "To Review"].map((tab) => (
           <button
             key={tab}

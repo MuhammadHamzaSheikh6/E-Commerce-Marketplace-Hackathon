@@ -93,7 +93,7 @@ export default function Banner() {
               priority={index === 0}
               className="w-full md:h-[400px] h-[250px] lg:h-[650px] object-cover"
             />
-            <figcaption className="absolute top-1/2 py-2 px-2 md:pl-8 md:pr-5 md:pt-9 w-[190px] h-[140px] md:w-[360px] md:h-[280px] right-6 md:right-12 lg:w-[623px] lg:h-[423px] rounded-xl bg-[#FFF3E3] transform -translate-y-1/2">
+            <figcaption className="absolute top-1/2 py-3 px-2 md:pl-8 md:pr-5 md:pt-9 w-[190px] h-[140px] md:w-[360px] md:h-[280px] right-6 md:right-12 lg:w-[623px] lg:h-[423px] rounded-xl bg-[#FFF3E3] transform -translate-y-1/2">
               <h2 className="lg:text-xl md:text-xl text-[13px] font-semibold">{banner.topHeading}</h2>
               <h1 className="lg:text-5xl text-[12px] lg:my-4 md:text-2xl py-1 text-[#B88E2F] font-extrabold">
                 {banner.centerHeading}

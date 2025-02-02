@@ -10,6 +10,7 @@ import Head from "next/head";
 import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import toast, { Toaster } from "react-hot-toast";
+import { useWishlist } from "@/app/context/WishlistContext";
 
 interface IProduct {
   _id: string;
@@ -26,44 +27,46 @@ export default function BedroomPage() {
   const [data, setData] = useState<IProduct[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const handleWishlist = (product: IProduct) => {
-    if (!product) return;
+   // Use the useWishlist hook to access wishlist functions
+   const { addToWishlist } = useWishlist();
 
-    // Retrieve the wishlist from localStorage
-    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-
-    // Check if the product is already in the wishlist
-    const isAlreadyInWishlist = wishlist.some(
-      (item: IProduct) => item._id === product._id
-    );
-
-    if (isAlreadyInWishlist) {
-      toast.success("Product is already in your wishlist!", {
-        position: "top-right",
-        duration: 3000,
-        style: {
-          background: "#f87171",
-          color: "white",
-        },
-      });
-      return;
-    }
-
-    // Add the selected product to the wishlist
-    const updatedWishlist = [...wishlist, product];
-
-    // Save the updated wishlist back to localStorage
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-
-    toast.success("Product added to wishlist!", {
-      position: "top-right",
-      duration: 3000,
-      style: {
-        background: "#B88E2F",
-        color: "white",
-      },
-    });
-  };
+   // Handle wishlist functionality
+   const handleWishlist = (product: IProduct) => {
+     if (!product) {
+       toast.error("Invalid product data.", {
+         position: "top-right",
+         duration: 3000,
+         style: {
+           background: "#f87171",
+           color: "white",
+         },
+       });
+       return;
+     }
+ 
+     try {
+       addToWishlist(product); // Use the addToWishlist function from context
+       toast.success("Product added to wishlist!", {
+         position: "top-right",
+         duration: 3000,
+         style: {
+           background: "#B88E2F",
+           color: "white",
+         },
+       });
+     } catch (err) {
+       console.error("Error handling wishlist:", err);
+       toast.error("Failed to add product to wishlist.", {
+         position: "top-right",
+         duration: 3000,
+         style: {
+           background: "#f87171",
+           color: "white",
+         },
+       });
+     }
+   };
+ 
 
   // Function to handle sharing
   const handleShare = (productId: string) => {
