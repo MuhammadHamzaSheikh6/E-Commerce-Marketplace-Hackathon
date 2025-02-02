@@ -2,7 +2,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CiSearch } from "react-icons/ci";
-import { RiAccountPinCircleFill } from "react-icons/ri";
 import {
   Sheet,
   SheetContent,
@@ -13,10 +12,10 @@ import {
 } from "@/components/ui/sheet";
 import { FaBars } from "react-icons/fa6";
 import Cart from "./adToCart/cart";
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { IoMdSearch } from "react-icons/io";
 import { usePathname } from "next/navigation"; // Import usePathname
 import WishlistIcon from "./wishlist/WishlistIcon";
+import AuthSection from "./authSection";
 
 export default function Header() {
   const pathname = usePathname(); // Get the current pathname
@@ -103,19 +102,7 @@ export default function Header() {
           </button>
           <WishlistIcon />
           <Cart />
-          <SignedOut>
-            <SignInButton>
-              <button
-                className="text-gray-600 hover:text-gray-800"
-                aria-label="Sign In"
-              >
-                <RiAccountPinCircleFill size={24} />
-              </button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          <AuthSection />
         </div>
 
         {/* Mobile Menu */}
@@ -170,19 +157,7 @@ export default function Header() {
                   className="flex justify-center items-center gap-4 mt-5"
                   aria-label="Mobile User Actions"
                 >
-                  <SignedOut>
-                    <SignInButton>
-                      <button
-                        className="text-gray-600 hover:text-gray-800"
-                        aria-label="Sign In"
-                      >
-                        <RiAccountPinCircleFill size={24} />
-                      </button>
-                    </SignInButton>
-                  </SignedOut>
-                  <SignedIn>
-                    <UserButton />
-                  </SignedIn>
+                  <AuthSection />
                   <button
                     className="text-gray-600 hover:text-gray-800"
                     aria-label="Search"
