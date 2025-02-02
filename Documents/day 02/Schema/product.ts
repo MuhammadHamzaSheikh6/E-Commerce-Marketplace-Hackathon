@@ -1,3 +1,5 @@
+import { Rule } from "sanity"
+
 export const product = {
     name: 'product',
     title: 'Product',
@@ -16,8 +18,8 @@ export const product = {
       { name: 'image1', type: 'image', title: 'Additional Image 1', options: { hotspot: true } },
       { name: 'image2', type: 'image', title: 'Additional Image 2', options: { hotspot: true } },
       { name: 'image3', type: 'image', title: 'Additional Image 3', options: { hotspot: true } },
-      { name: 'availableSizes', type: 'array', of: [{ type: 'string' }], title: 'Available Sizes', description: 'Add available sizes for the product (e.g., Small, Medium, Large, etc.)', validation: (Rule) => Rule.required().min(1).warning('At least one size must be added.') },
-      { name: 'availableColors', type: 'array', of: [{ type: 'string' }], title: 'Available Colors', description: 'Add available colors for the product (e.g., Red, Blue, Green, etc.)', validation: (Rule) => Rule.required().min(1).warning('At least one color must be added.') },
+      { name: 'availableSizes', type: 'array', of: [{ type: 'string' }], title: 'Available Sizes', description: 'Add available sizes for the product (e.g., Small, Medium, Large, etc.)', validation: (Rule: Rule) => Rule.required().min(1).warning('At least one size must be added.') },
+      { name: 'availableColors', type: 'array', of: [{ type: 'string' }], title: 'Available Colors', description: 'Add available colors for the product (e.g., Red, Blue, Green, etc.)', validation: (Rule: Rule) => Rule.required().min(1).warning('At least one color must be added.') },
       { name: 'defaultSize', type: 'string', title: 'Default Size', description: 'Specify the default size for this product.', options: { list: [ { title: 'Small', value: 'small' }, { title: 'Medium', value: 'medium' }, { title: 'Large', value: 'large' } ] } },
       { name: 'defaultColor', type: 'string', title: 'Default Color', description: 'Specify the default color for this product.', options: { list: [ { title: 'Red', value: 'red' }, { title: 'Blue', value: 'blue' }, { title: 'Green', value: 'green' } ] } },
       { name: 'SKU', type: 'string', title: 'SKU' },

@@ -1,3 +1,5 @@
+import { Rule } from "sanity";
+
 export default {
     name: 'customer',
     type: 'document',
@@ -7,13 +9,13 @@ export default {
         name: 'name',
         type: 'string',
         title: 'Customer Name',
-        validation: Rule => Rule.required().min(2).error('Name is required and should have at least 2 characters'),
+        validation: (Rule: Rule) => Rule.required().min(2).error('Name is required and should have at least 2 characters'),
       },
       {
         name: 'email',
         type: 'string',
         title: 'Email Address',
-        validation: Rule => Rule.required().regex(
+        validation: (Rule: Rule) => Rule.required().regex(
           /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
           { name: 'email', invert: false }
         ).error('Enter a valid email address'),
@@ -22,7 +24,7 @@ export default {
         name: 'phone',
         type: 'string',
         title: 'Phone Number',
-        validation: Rule => Rule.regex(/^\+?[1-9]\d{1,14}$/, {
+        validation: (Rule: Rule) => Rule.regex(/^\+?[1-9]\d{1,14}$/, {
           name: 'phone',
           invert: false,
         }).error('Enter a valid phone number'),
