@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { CiHeart, CiSearch } from "react-icons/ci";
+import { CiSearch } from "react-icons/ci";
 import { RiAccountPinCircleFill } from "react-icons/ri";
 import {
   Sheet,
