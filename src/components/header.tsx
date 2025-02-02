@@ -101,7 +101,7 @@ export default function Header() {
           >
             <IoMdSearch size={24} />
           </button>
-          <WishlistIcon/>
+          <WishlistIcon />
           <Cart />
           <SignedOut>
             <SignInButton>

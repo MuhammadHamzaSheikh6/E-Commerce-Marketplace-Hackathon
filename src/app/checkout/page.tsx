@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { MdKeyboardArrowRight } from 'react-icons/md';
+import { useLocalStorage } from '../context/CartContext'; // Import the shared context
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
 
@@ -30,7 +31,7 @@ interface FormData {
   paymentMethod: string;
 }
 
-const CheckoutForm = () => {
+const CheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -49,12 +50,14 @@ const CheckoutForm = () => {
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: 'https://hamza-hackathon-plum.vercel.app/success',
+          return_url: 'http://localhost:3000/success',
         },
       });
 
       if (error) {
         setErrorMessage(error.message || 'An error occurred.');
+      } else {
+        onSuccess(); // Call the onSuccess callback to handle post-payment logic
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -83,7 +86,7 @@ const CheckoutForm = () => {
 };
 
 export default function Checkout() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useLocalStorage<CartItem[]>("cart", []); // Use shared context
   const [clientSecret, setClientSecret] = useState<string>('');
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -102,7 +105,7 @@ export default function Checkout() {
 
   // Fetch cart items from localStorage
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     if (Array.isArray(storedCart)) {
       setCartItems(storedCart as CartItem[]);
     }
@@ -139,6 +142,15 @@ export default function Checkout() {
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handlePaymentSuccess = () => {
+    // Clear the cart from local storage and state
+    localStorage.removeItem("cart");
+    setCartItems([]);
+
+    // Optional: Redirect to a success page
+    window.location.href = "/success"; // Replace with your success page URL
   };
 
   const options = {
@@ -318,7 +330,7 @@ export default function Checkout() {
                   rows={4}
                 />
               </div>
-            </form>
+              </form>
           </div>
 
           {/* Order Summary Section */}
@@ -351,7 +363,7 @@ export default function Checkout() {
             <div className="mt-6">
               {clientSecret && (
                 <Elements stripe={stripePromise} options={options}>
-                  <CheckoutForm />
+                  <CheckoutForm onSuccess={handlePaymentSuccess} />
                 </Elements>
               )}
             </div>
