@@ -190,14 +190,7 @@ export default function Header() {
                   >
                     <CiSearch size={24} />
                   </button>
-                  <Link href="/wishlist" passHref>
-                    <button
-                      className="mt-2 text-gray-600 hover:text-gray-800"
-                      aria-label="Wishlist"
-                    >
-                      <CiHeart size={24} />
-                    </button>
-                  </Link>
+                  <WishlistIcon />
                   <Cart />
                 </div>
               </SheetDescription>
