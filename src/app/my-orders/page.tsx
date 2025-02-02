@@ -22,15 +22,17 @@ export default function MyOrders() {
 
   return (
     <div className="container mx-auto p-2 md:p-6">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">My Orders</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-8 text-gray-800">
+        My Orders
+      </h1>
 
       {/* Tabs */}
-      <div className="flex md:gap-6 mb-8 border-b border-gray-200">
+      <div className="flex flex-wrap gap-2 md:gap-6 mb-4 md:mb-8 border-b border-gray-200">
         {["All", "To Pay", "To Ship", "To Receive", "To Review"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`py-3 px-6 text-sm font-medium transition-all duration-300 ${
+            className={`py-2 px-4 md:py-3 md:px-6 text-sm font-medium transition-all duration-300 ${
               activeTab === tab
                 ? "border-b-2 border-[#B88E2F] text-[#B88E2F]"
                 : "text-gray-500 hover:text-gray-700"
@@ -42,15 +44,15 @@ export default function MyOrders() {
       </div>
 
       {/* Orders List */}
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {filteredOrders.map((order) => (
           <div
             key={order.id}
-            className="p-6 border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 bg-white"
+            className="p-4 md:p-6 border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 bg-white"
           >
-            <div className="flex justify-between items-start">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
               <div>
-                <h2 className="text-xl font-semibold text-gray-800">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-800">
                   {order.product}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
@@ -58,7 +60,7 @@ export default function MyOrders() {
                 </p>
               </div>
               <span
-                className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                className={`mt-2 md:mt-0 px-3 py-1 text-sm font-semibold rounded-full ${
                   order.status === "To Pay"
                     ? "bg-yellow-100 text-yellow-800"
                     : order.status === "To Ship"
