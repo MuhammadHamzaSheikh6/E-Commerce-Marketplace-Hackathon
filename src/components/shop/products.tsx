@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
@@ -13,56 +13,55 @@ interface ProductGridProps {
   products: IProduct[];
 }
 
-const handleShare = async (productId: string) => {
-  const productLink = `${window.location.origin}/product/${productId}`;
+const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
+  const { addToWishlist } = useWishlist();
 
-  try {
-    // Check if the Web Share API is supported
-    if (navigator.share) {
-      await navigator.share({
-        title: "Check out this product!",
-        text: "I found this amazing product and thought you might like it.",
-        url: productLink,
-      });
-      toast.success("Product shared successfully!", {
+  // Handle share functionality
+  const handleShare = useCallback(async (productId: string) => {
+    const productLink = `${window.location.origin}/product/${productId}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "Check out this product!",
+          text: "I found this amazing product and thought you might like it.",
+          url: productLink,
+        });
+        toast.success("Product shared successfully!", {
+          position: "top-right",
+          duration: 3000,
+          style: {
+            background: "#4ade80",
+            color: "white",
+          },
+        });
+      } else {
+        await navigator.clipboard.writeText(productLink);
+        toast.success("Link copied to clipboard!", {
+          position: "top-right",
+          duration: 3000,
+          style: {
+            background: "#4ade80",
+            color: "white",
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Error sharing product:", err);
+      toast.error("Failed to share product.", {
         position: "top-right",
         duration: 3000,
         style: {
-          background: "#4ade80",
-          color: "white",
-        },
-      });
-    } else {
-      // Fallback for browsers that don't support the Web Share API
-      await navigator.clipboard.writeText(productLink);
-      toast.success("Link copied to clipboard!", {
-        position: "top-right",
-        duration: 3000,
-        style: {
-          background: "#4ade80",
+          background: "#f87171",
           color: "white",
         },
       });
     }
-  } catch (err) {
-    console.error("Error sharing product:", err);
-    toast.error("Failed to share product.", {
-      position: "top-right",
-      duration: 3000,
-      style: {
-        background: "#f87171",
-        color: "white",
-      },
-    });
-  }
-};
+  }, []);
 
-const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
-    // Use the useWishlist hook to access wishlist functions
-    const { addToWishlist } = useWishlist();
-
-    // Handle wishlist functionality
-    const handleWishlist = (product: IProduct) => {
+  // Handle wishlist functionality
+  const handleWishlist = useCallback(
+    (product: IProduct) => {
       if (!product) {
         toast.error("Invalid product data.", {
           position: "top-right",
@@ -74,9 +73,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
         });
         return;
       }
-  
+
       try {
-        addToWishlist(product); // Use the addToWishlist function from context
+        addToWishlist(product);
         toast.success("Product added to wishlist!", {
           position: "top-right",
           duration: 3000,
@@ -96,7 +95,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
           },
         });
       }
-    };
+    },
+    [addToWishlist]
+  );
+
   return (
     <div className="grid px-4 lg:px-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <Toaster />
@@ -105,6 +107,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
           key={item._id}
           className="relative group bg-gray-100 overflow-hidden"
         >
+          {/* Product Image */}
           <Image
             src={urlFor(item.productImage).width(1000).height(1000).url()}
             alt={`Image of ${item.title}`}
@@ -112,7 +115,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
             height={1000}
             className="object-cover"
             loading="lazy"
+            priority={false} // Only load above-the-fold images eagerly
           />
+
+          {/* Discount Badge */}
           {item.dicountPercentage && (
             <span
               className="absolute top-4 right-4 bg-[#E97171] text-white text-xs font-bold py-2 px-4 rounded-full flex items-center justify-center"
@@ -126,6 +132,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
               %{item.dicountPercentage}
             </span>
           )}
+
+          {/* New Badge */}
           {item.isNew && (
             <span
               className="absolute top-4 right-4 bg-[#2EC1AC] text-white text-xs font-bold py-2 px-4 rounded-full flex items-center justify-center"
@@ -139,6 +147,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
               NEW
             </span>
           )}
+
+          {/* Product Details */}
           <div className="p-4">
             <h3 className="font-semibold text-lg">{item.title}</h3>
             <p className="text-gray-500 text-sm">{item.shortDescription}</p>
@@ -151,6 +161,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
               )}
             </div>
           </div>
+
+          {/* Hover Overlay */}
           <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <Link href={`/product/${item._id}`} legacyBehavior>
               <a className="bg-white text-yellow-600 px-6 py-2 mb-2 font-medium rounded shadow">
@@ -166,15 +178,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
                 <IoMdShare />
                 <span>Share</span>
               </button>
-              <a href={`/comparison/${item._id}`}>
-                <button className="flex items-center gap-1 hover:text-red-500 text-white">
-                  <MdCompareArrows />
-                  <span>Compare</span>
-                </button>
-              </a>
+              <Link href={`/comparison/${item._id}`} legacyBehavior>
+                <a>
+                  <button
+                    className="flex items-center gap-1 hover:text-red-500 text-white"
+                    aria-label={`Compare ${item.title}`}
+                  >
+                    <MdCompareArrows />
+                    <span>Compare</span>
+                  </button>
+                </a>
+              </Link>
               <button
                 onClick={() => handleWishlist(item)}
                 className="flex items-center gap-1 text-white hover:text-red-500"
+                aria-label={`Add ${item.title} to wishlist`}
               >
                 <FaRegHeart />
                 <span>Like</span>

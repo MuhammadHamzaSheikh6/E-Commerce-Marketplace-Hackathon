@@ -17,8 +17,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
 
+// Zod schema for form validation
 const formSchema = z.object({
   yourname: z.string().min(2, "Name is too short").max(50),
   email: z.string().email("Invalid email address"),
@@ -37,6 +39,7 @@ const ContactPage: React.FC = () => {
     },
   });
 
+  // Form submission handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const response = await fetch("/api/contact", {
@@ -44,17 +47,19 @@ const ContactPage: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-  
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to submit form");
       }
-  
+
+      // Show success toast
       toast.success("Form submitted successfully!", {
         position: "top-right",
         autoClose: 3000,
         style: { background: "#4ade80", color: "white" }, // Success green
       });
+
       form.reset(); // Reset form after successful submission
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -78,14 +83,13 @@ const ContactPage: React.FC = () => {
   return (
     <>
       <header>
-        <div className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh] ">
+        <div className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh]">
           <Image
             src="/shop/banner11.png"
             alt="Shop Map"
             layout="fill"
             objectFit="cover"
-            className=""
-            loading="lazy"
+            priority // Prioritize loading the banner image
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
             <Link href="/">
@@ -95,7 +99,7 @@ const ContactPage: React.FC = () => {
                 width={32}
                 height={20}
                 className="w-12 h-8"
-                loading="lazy"
+                priority // Prioritize loading the logo
               />
             </Link>
             <h4 className="text-4xl font-bold">Contact</h4>
@@ -158,6 +162,7 @@ const ContactPage: React.FC = () => {
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-10"
+                noValidate // Disable browser validation
               >
                 <FormField
                   control={form.control}

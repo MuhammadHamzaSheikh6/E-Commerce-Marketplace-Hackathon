@@ -10,6 +10,8 @@ import { BsCalendar2DateFill, BsFillTagFill } from "react-icons/bs";
 import { AiOutlineSearch } from "react-icons/ai";
 import Pagination from "@/components/blog/pagination";
 import Feature from "@/components/button/feature";
+import debounce from "lodash.debounce";
+import DOMPurify from "dompurify";
 
 interface IBlog {
   _id: string;
@@ -55,6 +57,9 @@ export default function BlogPage() {
             category->{_id, title, description}
           }`
         );
+        if (!fetchedBlogs.length) {
+          throw new Error("No blogs found.");
+        }
         setBlogs(fetchedBlogs);
 
         const fetchedCategories: ICategory[] = await client.fetch(
@@ -64,9 +69,14 @@ export default function BlogPage() {
             "blogCount": count(*[_type == "blog" && references(^._id)])
           }`
         );
+        if (!fetchedCategories.length) {
+          throw new Error("No categories found.");
+        }
         setCategories(fetchedCategories);
       } catch (error) {
         console.error("Failed to fetch content:", error);
+        setBlogs([]);
+        setCategories([]);
       } finally {
         setIsLoading(false);
       }
@@ -74,6 +84,11 @@ export default function BlogPage() {
 
     fetchContent();
   }, []);
+
+  const handleSearch = debounce((query: string) => {
+    setSearchQuery(DOMPurify.sanitize(query));
+    setCurrentPage(1);
+  }, 300);
 
   const filteredBlogs = blogs.filter((blog) => {
     return (
@@ -94,7 +109,7 @@ export default function BlogPage() {
 
   if (isLoading) {
     return (
-      <div className="w-full h-screen flex justify-center items-center ">
+      <div className="w-full h-screen flex justify-center items-center">
         <div className="text-center space-y-6">
           <Image
             src="/logo.png"
@@ -111,30 +126,6 @@ export default function BlogPage() {
             <span className="dot text-5xl">.</span>
           </div>
         </div>
-
-        <style jsx>{`
-          .dot {
-            animation: blink 1.5s infinite step-start;
-          }
-
-          .dot:nth-child(1) {
-            animation-delay: 0s;
-          }
-
-          .dot:nth-child(2) {
-            animation-delay: 0.3s;
-          }
-
-          .dot:nth-child(3) {
-            animation-delay: 0.6s;
-          }
-
-          @keyframes blink {
-            50% {
-              opacity: 0;
-            }
-          }
-        `}</style>
       </div>
     );
   }
@@ -143,14 +134,13 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen">
-      <header className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh] ">
+      <header className="relative w-full lg:h-[50vh] md:h-[30vh] h-[30vh]">
         <Image
           src="/shop/banner11.png"
           alt="Blog Header"
           layout="fill"
           objectFit="cover"
-          className=""
-          loading="lazy"
+          priority
         />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-gray-950">
           <Link href="/">
@@ -203,7 +193,7 @@ export default function BlogPage() {
                 <h2 className="text-xl font-bold">{blog.title}</h2>
                 <p className="text-gray-600 mt-4">{blog.shortDescription}</p>
                 <Link
-                  href={`/blog/${blog._id}`} // Dynamic route for blog details
+                  href={`/blog/${encodeURIComponent(blog._id)}`}
                   className="text-blue-600 hover:underline mt-4 inline-block"
                 >
                   Read more
@@ -224,8 +214,7 @@ export default function BlogPage() {
               type="text"
               placeholder="Search..."
               className="w-full h-[58px] border border-gray-300 rounded-md p-4 pr-12"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
             />
             <AiOutlineSearch className="absolute right-4 top-4 text-gray-500" size={20} />
           </div>
@@ -254,7 +243,7 @@ export default function BlogPage() {
                     loading="lazy"
                   />
                   <div>
-                    <Link href={`/blog/${blog._id}`} className="text-blue-600 hover:underline">
+                    <Link href={`/blog/${encodeURIComponent(blog._id)}`} className="text-blue-600 hover:underline">
                       {blog.title}
                     </Link>
                     <p className="text-sm text-gray-500">

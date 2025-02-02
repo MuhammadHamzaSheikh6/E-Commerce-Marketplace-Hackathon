@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { BsViewList } from "react-icons/bs";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { TbArrowsRightLeft } from "react-icons/tb";
@@ -35,16 +35,52 @@ const Filter: React.FC<FilterProps> = ({
 }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+  // Memoized handler for toggling filter visibility
+  const toggleFilter = useCallback(() => {
+    setIsFilterOpen((prev) => !prev);
+  }, []);
+
+  // Handler for price range input changes with validation
+  const handlePriceRangeChange = useCallback(
+    (index: number, value: string) => {
+      const parsedValue = parseInt(value, 10);
+      if (isNaN(parsedValue) || parsedValue < 0) return; // Validate input
+
+      const newRange = [...priceRange];
+      newRange[index] = parsedValue;
+      setPriceRange(newRange);
+    },
+    [priceRange, setPriceRange]
+  );
+
+  // Handler for "Is New" dropdown changes
+  const handleIsNewChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const value = e.target.value;
+      setIsNew(value === "all" ? null : value === "true");
+    },
+    [setIsNew]
+  );
+
+  // Handler for "Show" dropdown changes
+  const handleShowChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const value = parseInt(e.target.value, 10);
+      if (!isNaN(value) && value > 0) setShow(value); // Validate input
+    },
+    [setShow]
+  );
+
   return (
     <>
       {/* Main Filter Section */}
-      <div className="flex  flex-col lg:flex-row justify-around items-center bg-[#F9F1E7] py-5 gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col lg:flex-row justify-around items-center bg-[#F9F1E7] py-5 gap-4 px-4 sm:px-6 lg:px-8">
         {/* Left Section */}
         <div className="flex flex-col sm:flex-row items-center text-center gap-4 lg:w-auto">
           <ul className="flex items-center text-xl sm:text-2xl gap-4">
             <li
               className="flex items-center gap-2 cursor-pointer"
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              onClick={toggleFilter}
             >
               <TbArrowsRightLeft className="text-[#F9A13D]" />
               <span className="font-medium text-[#1F3A5E]">Filter</span>
@@ -68,7 +104,7 @@ const Filter: React.FC<FilterProps> = ({
         </div>
 
         {/* Right Section */}
-        <div className="flex flex-col sm:flex-row text-lg gap-4  lg:w-auto">
+        <div className="flex flex-col sm:flex-row text-lg gap-4 lg:w-auto">
           {/* SearchBar Component */}
           <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
@@ -81,7 +117,7 @@ const Filter: React.FC<FilterProps> = ({
               id="shop"
               className="p-2 text-gray-600 border rounded-lg focus:ring-[#F9A13D] focus:ring-2 w-full sm:w-auto"
               value={show}
-              onChange={(e) => setShow(parseInt(e.target.value))}
+              onChange={handleShowChange}
             >
               <option value="8">8</option>
               <option value="16">16</option>
@@ -120,11 +156,7 @@ const Filter: React.FC<FilterProps> = ({
           <div className="flex flex-col sm:flex-row gap-6 items-center">
             <div className="relative">
               <select
-                onChange={(e) =>
-                  setIsNew(
-                    e.target.value === "all" ? null : e.target.value === "true"
-                  )
-                }
+                onChange={handleIsNewChange}
                 className="appearance-none bg-[#F5E1A4] text-[#1F3A5E] border-2 border-[#F5E1A4] rounded-full px-6 py-2 w-36 transition duration-300 ease-in-out hover:border-[#F9A13D] focus:ring-2 focus:ring-[#F9A13D] cursor-pointer"
               >
                 <option value="all">All</option>
@@ -155,21 +187,19 @@ const Filter: React.FC<FilterProps> = ({
               <input
                 type="number"
                 value={priceRange[0]}
-                onChange={(e) =>
-                  setPriceRange([parseInt(e.target.value), priceRange[1]])
-                }
+                onChange={(e) => handlePriceRangeChange(0, e.target.value)}
                 className="bg-[#F5E1A4] text-[#1F3A5E] border-2 border-[#F5E1A4] rounded-full px-4 py-2 w-24 transition duration-300 ease-in-out focus:ring-2 focus:ring-[#F9A13D] hover:border-[#F9A13D]"
                 placeholder="Min"
+                min="0"
               />
               <span className="text-[#1F3A5E]">-</span>
               <input
                 type="number"
                 value={priceRange[1]}
-                onChange={(e) =>
-                  setPriceRange([priceRange[0], parseInt(e.target.value)])
-                }
+                onChange={(e) => handlePriceRangeChange(1, e.target.value)}
                 className="bg-[#F5E1A4] text-[#1F3A5E] border-2 border-[#F5E1A4] rounded-full px-4 py-2 w-24 transition duration-300 ease-in-out focus:ring-2 focus:ring-[#F9A13D] hover:border-[#F9A13D]"
                 placeholder="Max"
+                min="0"
               />
             </div>
           </div>
