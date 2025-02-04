@@ -4,9 +4,17 @@ import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { FaFacebook, FaInstagram, FaMinus, FaPlus, FaTwitter } from "react-icons/fa6";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaMinus,
+  FaPlus,
+  FaTwitter,
+} from "react-icons/fa6";
 import { MdOutlineStar } from "react-icons/md";
-
+import { useRouter } from "next/navigation"; // Import useRouter
+import { useUser } from "@clerk/nextjs"; // Import useUser from
+import Notification from "../Notification"; // Import the Notification component
 
 export interface IProduct {
   title: string;
@@ -37,6 +45,8 @@ export default function Detail({ id }: { id: string }) {
   const [error, setError] = useState<string | null>(null);
   const [cart, setCart] = useLocalStorage<IProduct[]>("cart", []);
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
+  const router = useRouter(); // Initialize useRouter
+  const { isSignedIn, isLoaded } = useUser(); // Use the useUser hook from
 
   // Fetch product data
   useEffect(() => {
@@ -122,10 +132,31 @@ export default function Detail({ id }: { id: string }) {
     }
     window.open(url, "_blank");
   };
-  
+
+  // State for the notification
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
+
   // Handle add to cart
   const handleCart = () => {
     if (!product) return;
+
+    if (!isLoaded) {
+      // Clerk is still loading, you might want to show a loading indicator
+      console.log("Clerk is still loading...");
+      return;
+    }
+
+    if (!isSignedIn) {
+      // Redirect to sign-in page with returnBackUrl
+      const returnBackUrl = window.location.href;
+      router.push(
+        `/sign-in?returnBackUrl=${encodeURIComponent(returnBackUrl)}`
+      );
+      return;
+    }
 
     const updatedCart = [
       ...cart,
@@ -138,10 +169,21 @@ export default function Detail({ id }: { id: string }) {
     ];
 
     setCart(updatedCart);
-    alert("Product added to cart!");
+    // Show the notification
+    setNotification({ message: "Product added to cart!", type: "success" });
   };
 
-  const ImageModal = ({ src, onClose }: { src: string; onClose: () => void }) => {
+  const closeNotification = () => {
+    setNotification(null);
+  };
+
+  const ImageModal = ({
+    src,
+    onClose,
+  }: {
+    src: string;
+    onClose: () => void;
+  }) => {
     return (
       <div
         style={{
@@ -193,12 +235,25 @@ export default function Detail({ id }: { id: string }) {
   } = product;
 
   // Prepare thumbnail images
-  const thumbnailImages = [productImage, productImage1, productImage2, productImage3]
+  const thumbnailImages = [
+    productImage,
+    productImage1,
+    productImage2,
+    productImage3,
+  ]
     .filter((img) => img)
     .map((img) => urlFor(img!).url());
 
   return (
     <div className="max-w-7xl mx-auto grid md:mx-8 grid-cols-1 lg:grid-cols-12 gap-12">
+      {/* Render the notification component */}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={closeNotification}
+        />
+      )}
       {/* Left Section */}
       <div className="lg:col-span-6 lg:flex gap-3 md:gap-7 space-y-6">
         <div className="lg:space-y-10 md:space-x-0 space-x-5 flex justify-center lg:block mt-6">
@@ -238,7 +293,9 @@ export default function Detail({ id }: { id: string }) {
 
       {/* Right Section */}
       <div className="lg:col-span-6 mx-3 md:mx-0 mt-8 space-y-6">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-800">{title}</h1>
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-800">
+          {title}
+        </h1>
         <p className="text-xl text-gray-400 font-semibold">Rs. {price}</p>
         <p className="text-gray-600 md:mr-48">{description}</p>
 
